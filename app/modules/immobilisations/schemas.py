@@ -29,6 +29,7 @@ class CategorieImmobilisationResponse(BaseModel):
     duree_amortissement_annees: int
     taux_amortissement: Optional[Decimal] = None
     created_at: datetime
+    updated_at: datetime
 
 
 class ImmobilisationCreate(BaseModel):
@@ -65,6 +66,7 @@ class ImmobilisationResponse(BaseModel):
     date_mise_en_service: Optional[date] = None
     actif: bool
     created_at: datetime
+    updated_at: datetime
 
 
 class LigneAmortissementResponse(BaseModel):

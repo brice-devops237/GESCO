@@ -18,12 +18,24 @@ from app.modules.parametrage.services.role import RoleService
 from app.modules.parametrage.services.taux_change import TauxChangeService
 from app.modules.parametrage.services.utilisateur import UtilisateurService
 
-router = APIRouter(prefix="/parametrage", tags=["Paramétrage"])
+router = APIRouter(
+    prefix="/parametrage",
+    responses={401: {"description": "Non authentifié"}, 403: {"description": "Droits insuffisants"}},
+)
+
+TAG_ENTREPRISES = "Paramétrage - Entreprises"
+TAG_DEVISES = "Paramétrage - Devises"
+TAG_TAUX_CHANGE = "Paramétrage - Taux de change"
+TAG_POINTS_VENTE = "Paramétrage - Points de vente"
+TAG_ROLES = "Paramétrage - Rôles"
+TAG_PERMISSIONS = "Paramétrage - Permissions"
+TAG_UTILISATEURS = "Paramétrage - Utilisateurs"
+TAG_AFFECTATIONS_PDV = "Paramétrage - Affectations utilisateur-PDV"
 
 
 # --- Entreprises ---
 
-@router.get("/entreprises", response_model=list[schemas.EntrepriseResponse])
+@router.get("/entreprises", response_model=list[schemas.EntrepriseResponse], tags=[TAG_ENTREPRISES])
 async def list_entreprises(
     db: DbSession,
     current_user: CurrentUser,
@@ -40,7 +52,7 @@ async def list_entreprises(
     return items
 
 
-@router.get("/entreprises/{entreprise_id}", response_model=schemas.EntrepriseResponse)
+@router.get("/entreprises/{entreprise_id}", response_model=schemas.EntrepriseResponse, tags=[TAG_ENTREPRISES])
 async def get_entreprise(
     db: DbSession,
     current_user: CurrentUser,
@@ -50,7 +62,7 @@ async def get_entreprise(
     return await EntrepriseService(db).get_or_404(entreprise_id)
 
 
-@router.post("/entreprises", response_model=schemas.EntrepriseResponse, status_code=201)
+@router.post("/entreprises", response_model=schemas.EntrepriseResponse, status_code=201, tags=[TAG_ENTREPRISES])
 async def create_entreprise(
     db: DbSession,
     current_user: CurrentUser,
@@ -60,7 +72,7 @@ async def create_entreprise(
     return await EntrepriseService(db).create(data)
 
 
-@router.patch("/entreprises/{entreprise_id}", response_model=schemas.EntrepriseResponse)
+@router.patch("/entreprises/{entreprise_id}", response_model=schemas.EntrepriseResponse, tags=[TAG_ENTREPRISES])
 async def update_entreprise(
     db: DbSession,
     current_user: CurrentUser,
@@ -71,7 +83,7 @@ async def update_entreprise(
     return await EntrepriseService(db).update(entreprise_id, data)
 
 
-@router.delete("/entreprises/{entreprise_id}", status_code=204)
+@router.delete("/entreprises/{entreprise_id}", status_code=204, tags=[TAG_ENTREPRISES])
 async def delete_entreprise(
     db: DbSession,
     current_user: CurrentUser,
@@ -83,7 +95,7 @@ async def delete_entreprise(
 
 # --- Devises ---
 
-@router.get("/devises", response_model=list[schemas.DeviseResponse])
+@router.get("/devises", response_model=list[schemas.DeviseResponse], tags=[TAG_DEVISES])
 async def list_devises(
     db: DbSession,
     current_user: CurrentUser,
@@ -97,7 +109,7 @@ async def list_devises(
     )
 
 
-@router.get("/devises/{devise_id}", response_model=schemas.DeviseResponse)
+@router.get("/devises/{devise_id}", response_model=schemas.DeviseResponse, tags=[TAG_DEVISES])
 async def get_devise(
     db: DbSession,
     current_user: CurrentUser,
@@ -107,7 +119,7 @@ async def get_devise(
     return await DeviseService(db).get_or_404(devise_id)
 
 
-@router.post("/devises", response_model=schemas.DeviseResponse, status_code=201)
+@router.post("/devises", response_model=schemas.DeviseResponse, status_code=201, tags=[TAG_DEVISES])
 async def create_devise(
     db: DbSession,
     current_user: CurrentUser,
@@ -117,7 +129,7 @@ async def create_devise(
     return await DeviseService(db).create(data)
 
 
-@router.patch("/devises/{devise_id}", response_model=schemas.DeviseResponse)
+@router.patch("/devises/{devise_id}", response_model=schemas.DeviseResponse, tags=[TAG_DEVISES])
 async def update_devise(
     db: DbSession,
     current_user: CurrentUser,
@@ -130,7 +142,7 @@ async def update_devise(
 
 # --- Taux de change ---
 
-@router.get("/taux-change", response_model=list[schemas.TauxChangeResponse])
+@router.get("/taux-change", response_model=list[schemas.TauxChangeResponse], tags=[TAG_TAUX_CHANGE])
 async def list_taux_change(
     db: DbSession,
     current_user: CurrentUser,
@@ -148,7 +160,7 @@ async def list_taux_change(
     )
 
 
-@router.get("/taux-change/{taux_id}", response_model=schemas.TauxChangeResponse)
+@router.get("/taux-change/{taux_id}", response_model=schemas.TauxChangeResponse, tags=[TAG_TAUX_CHANGE])
 async def get_taux_change(
     db: DbSession,
     current_user: CurrentUser,
@@ -158,7 +170,7 @@ async def get_taux_change(
     return await TauxChangeService(db).get_or_404(taux_id)
 
 
-@router.post("/taux-change", response_model=schemas.TauxChangeResponse, status_code=201)
+@router.post("/taux-change", response_model=schemas.TauxChangeResponse, status_code=201, tags=[TAG_TAUX_CHANGE])
 async def create_taux_change(
     db: DbSession,
     current_user: CurrentUser,
@@ -170,7 +182,7 @@ async def create_taux_change(
 
 # --- Points de vente ---
 
-@router.get("/entreprises/{entreprise_id}/points-vente", response_model=list[schemas.PointDeVenteResponse])
+@router.get("/entreprises/{entreprise_id}/points-vente", response_model=list[schemas.PointDeVenteResponse], tags=[TAG_POINTS_VENTE])
 async def list_points_vente(
     db: DbSession,
     current_user: CurrentUser,
@@ -185,7 +197,7 @@ async def list_points_vente(
     )
 
 
-@router.get("/points-vente/{point_vente_id}", response_model=schemas.PointDeVenteResponse)
+@router.get("/points-vente/{point_vente_id}", response_model=schemas.PointDeVenteResponse, tags=[TAG_POINTS_VENTE])
 async def get_point_vente(
     db: DbSession,
     current_user: CurrentUser,
@@ -195,7 +207,7 @@ async def get_point_vente(
     return await PointVenteService(db).get_or_404(point_vente_id)
 
 
-@router.post("/points-vente", response_model=schemas.PointDeVenteResponse, status_code=201)
+@router.post("/points-vente", response_model=schemas.PointDeVenteResponse, status_code=201, tags=[TAG_POINTS_VENTE])
 async def create_point_vente(
     db: DbSession,
     current_user: CurrentUser,
@@ -205,7 +217,7 @@ async def create_point_vente(
     return await PointVenteService(db).create(data)
 
 
-@router.patch("/points-vente/{point_vente_id}", response_model=schemas.PointDeVenteResponse)
+@router.patch("/points-vente/{point_vente_id}", response_model=schemas.PointDeVenteResponse, tags=[TAG_POINTS_VENTE])
 async def update_point_vente(
     db: DbSession,
     current_user: CurrentUser,
@@ -218,7 +230,7 @@ async def update_point_vente(
 
 # --- Rôles ---
 
-@router.get("/roles", response_model=list[schemas.RoleResponse])
+@router.get("/roles", response_model=list[schemas.RoleResponse], tags=[TAG_ROLES])
 async def list_roles(
     db: DbSession,
     current_user: CurrentUser,
@@ -232,7 +244,7 @@ async def list_roles(
     )
 
 
-@router.get("/roles/{role_id}", response_model=schemas.RoleResponse)
+@router.get("/roles/{role_id}", response_model=schemas.RoleResponse, tags=[TAG_ROLES])
 async def get_role(
     db: DbSession,
     current_user: CurrentUser,
@@ -242,7 +254,7 @@ async def get_role(
     return await RoleService(db).get_or_404(role_id)
 
 
-@router.post("/roles", response_model=schemas.RoleResponse, status_code=201)
+@router.post("/roles", response_model=schemas.RoleResponse, status_code=201, tags=[TAG_ROLES])
 async def create_role(
     db: DbSession,
     current_user: CurrentUser,
@@ -252,7 +264,7 @@ async def create_role(
     return await RoleService(db).create(data)
 
 
-@router.patch("/roles/{role_id}", response_model=schemas.RoleResponse)
+@router.patch("/roles/{role_id}", response_model=schemas.RoleResponse, tags=[TAG_ROLES])
 async def update_role(
     db: DbSession,
     current_user: CurrentUser,
@@ -265,7 +277,7 @@ async def update_role(
 
 # --- Permissions ---
 
-@router.get("/permissions", response_model=list[schemas.PermissionResponse])
+@router.get("/permissions", response_model=list[schemas.PermissionResponse], tags=[TAG_PERMISSIONS])
 async def list_permissions(
     db: DbSession,
     current_user: CurrentUser,
@@ -279,7 +291,7 @@ async def list_permissions(
     )
 
 
-@router.get("/permissions/{permission_id}", response_model=schemas.PermissionResponse)
+@router.get("/permissions/{permission_id}", response_model=schemas.PermissionResponse, tags=[TAG_PERMISSIONS])
 async def get_permission(
     db: DbSession,
     current_user: CurrentUser,
@@ -289,7 +301,7 @@ async def get_permission(
     return await PermissionService(db).get_or_404(permission_id)
 
 
-@router.post("/permissions", response_model=schemas.PermissionResponse, status_code=201)
+@router.post("/permissions", response_model=schemas.PermissionResponse, status_code=201, tags=[TAG_PERMISSIONS])
 async def create_permission(
     db: DbSession,
     current_user: CurrentUser,
@@ -299,7 +311,7 @@ async def create_permission(
     return await PermissionService(db).create(data)
 
 
-@router.post("/permissions-roles", response_model=schemas.PermissionRoleResponse, status_code=201)
+@router.post("/permissions-roles", response_model=schemas.PermissionRoleResponse, status_code=201, tags=[TAG_PERMISSIONS])
 async def add_permission_to_role(
     db: DbSession,
     current_user: CurrentUser,
@@ -309,7 +321,7 @@ async def add_permission_to_role(
     return await PermissionService(db).add_permission_to_role(data)
 
 
-@router.delete("/permissions-roles/{role_id}/{permission_id}", status_code=204)
+@router.delete("/permissions-roles/{role_id}/{permission_id}", status_code=204, tags=[TAG_PERMISSIONS])
 async def remove_permission_from_role(
     db: DbSession,
     current_user: CurrentUser,
@@ -322,7 +334,7 @@ async def remove_permission_from_role(
 
 # --- Utilisateurs ---
 
-@router.get("/entreprises/{entreprise_id}/utilisateurs", response_model=list[schemas.UtilisateurResponse])
+@router.get("/entreprises/{entreprise_id}/utilisateurs", response_model=list[schemas.UtilisateurResponse], tags=[TAG_UTILISATEURS])
 async def list_utilisateurs(
     db: DbSession,
     current_user: CurrentUser,
@@ -342,7 +354,7 @@ async def list_utilisateurs(
     )
 
 
-@router.get("/utilisateurs/{utilisateur_id}", response_model=schemas.UtilisateurResponse)
+@router.get("/utilisateurs/{utilisateur_id}", response_model=schemas.UtilisateurResponse, tags=[TAG_UTILISATEURS])
 async def get_utilisateur(
     db: DbSession,
     current_user: CurrentUser,
@@ -352,7 +364,7 @@ async def get_utilisateur(
     return await UtilisateurService(db).get_or_404(utilisateur_id)
 
 
-@router.post("/utilisateurs", response_model=schemas.UtilisateurResponse, status_code=201)
+@router.post("/utilisateurs", response_model=schemas.UtilisateurResponse, status_code=201, tags=[TAG_UTILISATEURS])
 async def create_utilisateur(
     db: DbSession,
     current_user: CurrentUser,
@@ -362,7 +374,7 @@ async def create_utilisateur(
     return await UtilisateurService(db).create(data)
 
 
-@router.patch("/utilisateurs/{utilisateur_id}", response_model=schemas.UtilisateurResponse)
+@router.patch("/utilisateurs/{utilisateur_id}", response_model=schemas.UtilisateurResponse, tags=[TAG_UTILISATEURS])
 async def update_utilisateur(
     db: DbSession,
     current_user: CurrentUser,
@@ -375,7 +387,7 @@ async def update_utilisateur(
 
 # --- Affectations utilisateur / PDV ---
 
-@router.get("/utilisateurs/{utilisateur_id}/affectations-pdv", response_model=list[schemas.AffectationUtilisateurPdvResponse])
+@router.get("/utilisateurs/{utilisateur_id}/affectations-pdv", response_model=list[schemas.AffectationUtilisateurPdvResponse], tags=[TAG_AFFECTATIONS_PDV])
 async def list_affectations_by_utilisateur(
     db: DbSession,
     current_user: CurrentUser,
@@ -387,7 +399,7 @@ async def list_affectations_by_utilisateur(
     )
 
 
-@router.get("/points-vente/{point_vente_id}/affectations", response_model=list[schemas.AffectationUtilisateurPdvResponse])
+@router.get("/points-vente/{point_vente_id}/affectations", response_model=list[schemas.AffectationUtilisateurPdvResponse], tags=[TAG_AFFECTATIONS_PDV])
 async def list_affectations_by_point_vente(
     db: DbSession,
     current_user: CurrentUser,
@@ -399,7 +411,7 @@ async def list_affectations_by_point_vente(
     )
 
 
-@router.post("/affectations-utilisateur-pdv", response_model=schemas.AffectationUtilisateurPdvResponse, status_code=201)
+@router.post("/affectations-utilisateur-pdv", response_model=schemas.AffectationUtilisateurPdvResponse, status_code=201, tags=[TAG_AFFECTATIONS_PDV])
 async def create_affectation_pdv(
     db: DbSession,
     current_user: CurrentUser,
@@ -409,7 +421,7 @@ async def create_affectation_pdv(
     return await AffectationUtilisateurPdvService(db).create(data)
 
 
-@router.patch("/affectations-utilisateur-pdv/{affectation_id}", response_model=schemas.AffectationUtilisateurPdvResponse)
+@router.patch("/affectations-utilisateur-pdv/{affectation_id}", response_model=schemas.AffectationUtilisateurPdvResponse, tags=[TAG_AFFECTATIONS_PDV])
 async def update_affectation_pdv(
     db: DbSession,
     current_user: CurrentUser,
@@ -420,7 +432,7 @@ async def update_affectation_pdv(
     return await AffectationUtilisateurPdvService(db).update(affectation_id, data)
 
 
-@router.delete("/affectations-utilisateur-pdv/{affectation_id}", status_code=204)
+@router.delete("/affectations-utilisateur-pdv/{affectation_id}", status_code=204, tags=[TAG_AFFECTATIONS_PDV])
 async def delete_affectation_pdv(
     db: DbSession,
     current_user: CurrentUser,

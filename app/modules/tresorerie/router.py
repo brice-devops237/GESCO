@@ -14,11 +14,15 @@ from app.modules.tresorerie.services import (
     ReglementService,
 )
 
-router = APIRouter(prefix="/tresorerie", tags=["Trésorerie"])
+router = APIRouter(prefix="/tresorerie")
+
+TAG_MODES_PAIEMENT = "Trésorerie - Modes de paiement"
+TAG_COMPTES_TRESORERIE = "Trésorerie - Comptes trésorerie"
+TAG_REGLEMENTS = "Trésorerie - Règlements"
 
 
 # --- Modes de paiement ---
-@router.get("/modes-paiement", response_model=list[schemas.ModePaiementResponse])
+@router.get("/modes-paiement", response_model=list[schemas.ModePaiementResponse], tags=[TAG_MODES_PAIEMENT])
 async def list_modes_paiement(
     db: DbSession,
     current_user: CurrentUser,
@@ -33,23 +37,23 @@ async def list_modes_paiement(
     return items
 
 
-@router.get("/modes-paiement/{id}", response_model=schemas.ModePaiementResponse)
+@router.get("/modes-paiement/{id}", response_model=schemas.ModePaiementResponse, tags=[TAG_MODES_PAIEMENT])
 async def get_mode_paiement(db: DbSession, current_user: CurrentUser, id: int):
     return await ModePaiementService(db).get_or_404(id)
 
 
-@router.post("/modes-paiement", response_model=schemas.ModePaiementResponse, status_code=201)
+@router.post("/modes-paiement", response_model=schemas.ModePaiementResponse, status_code=201, tags=[TAG_MODES_PAIEMENT])
 async def create_mode_paiement(db: DbSession, current_user: CurrentUser, data: schemas.ModePaiementCreate):
     return await ModePaiementService(db).create(data)
 
 
-@router.patch("/modes-paiement/{id}", response_model=schemas.ModePaiementResponse)
+@router.patch("/modes-paiement/{id}", response_model=schemas.ModePaiementResponse, tags=[TAG_MODES_PAIEMENT])
 async def update_mode_paiement(db: DbSession, current_user: CurrentUser, id: int, data: schemas.ModePaiementUpdate):
     return await ModePaiementService(db).update(id, data)
 
 
 # --- Comptes trésorerie ---
-@router.get("/comptes", response_model=list[schemas.CompteTresorerieResponse])
+@router.get("/comptes", response_model=list[schemas.CompteTresorerieResponse], tags=[TAG_COMPTES_TRESORERIE])
 async def list_comptes_tresorerie(
     db: DbSession,
     current_user: CurrentUser,
@@ -69,23 +73,23 @@ async def list_comptes_tresorerie(
     return items
 
 
-@router.get("/comptes/{id}", response_model=schemas.CompteTresorerieResponse)
+@router.get("/comptes/{id}", response_model=schemas.CompteTresorerieResponse, tags=[TAG_COMPTES_TRESORERIE])
 async def get_compte_tresorerie(db: DbSession, current_user: CurrentUser, id: int):
     return await CompteTresorerieService(db).get_or_404(id)
 
 
-@router.post("/comptes", response_model=schemas.CompteTresorerieResponse, status_code=201)
+@router.post("/comptes", response_model=schemas.CompteTresorerieResponse, status_code=201, tags=[TAG_COMPTES_TRESORERIE])
 async def create_compte_tresorerie(db: DbSession, current_user: CurrentUser, data: schemas.CompteTresorerieCreate):
     return await CompteTresorerieService(db).create(data)
 
 
-@router.patch("/comptes/{id}", response_model=schemas.CompteTresorerieResponse)
+@router.patch("/comptes/{id}", response_model=schemas.CompteTresorerieResponse, tags=[TAG_COMPTES_TRESORERIE])
 async def update_compte_tresorerie(db: DbSession, current_user: CurrentUser, id: int, data: schemas.CompteTresorerieUpdate):
     return await CompteTresorerieService(db).update(id, data)
 
 
 # --- Règlements ---
-@router.get("/reglements", response_model=list[schemas.ReglementResponse])
+@router.get("/reglements", response_model=list[schemas.ReglementResponse], tags=[TAG_REGLEMENTS])
 async def list_reglements(
     db: DbSession,
     current_user: CurrentUser,
@@ -109,11 +113,11 @@ async def list_reglements(
     return items
 
 
-@router.get("/reglements/{id}", response_model=schemas.ReglementResponse)
+@router.get("/reglements/{id}", response_model=schemas.ReglementResponse, tags=[TAG_REGLEMENTS])
 async def get_reglement(db: DbSession, current_user: CurrentUser, id: int):
     return await ReglementService(db).get_or_404(id)
 
 
-@router.post("/reglements", response_model=schemas.ReglementResponse, status_code=201)
+@router.post("/reglements", response_model=schemas.ReglementResponse, status_code=201, tags=[TAG_REGLEMENTS])
 async def create_reglement(db: DbSession, current_user: CurrentUser, data: schemas.ReglementCreate):
     return await ReglementService(db).create(data, created_by_id=getattr(current_user, "id", None))

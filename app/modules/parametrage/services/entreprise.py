@@ -40,6 +40,8 @@ class EntrepriseService(BaseParametrageService):
         actif_only: bool = False,
         search: str | None = None,
     ) -> tuple[list[Entreprise], int]:
+        """Liste globale des entreprises (sans filtre entreprise_id).
+        Convention : les autres modules utilisent get_all(entreprise_id, ...) pour une liste scopée."""
         return await self._repo.find_all(
             skip=skip,
             limit=limit,

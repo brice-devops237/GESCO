@@ -9,6 +9,7 @@ from collections.abc import AsyncGenerator
 from typing import Annotated
 
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
+from sqlalchemy.pool import NullPool
 from sqlalchemy.orm import DeclarativeBase, declared_attr
 
 # Import différé de get_settings pour éviter chargement circulaire au démarrage
@@ -22,9 +23,12 @@ def _get_database_url() -> str:
 
 
 def _get_engine_kwargs() -> dict:
-    """Options du moteur (pool, echo)."""
+    """Options du moteur (pool, echo). SQLite utilise NullPool."""
     from app.config import get_settings
     s = get_settings()
+    url = s.DATABASE_URL
+    if "sqlite" in url:
+        return {"poolclass": NullPool, "echo": s.DATABASE_ECHO}
     return {
         "pool_size": s.DATABASE_POOL_SIZE,
         "max_overflow": s.DATABASE_MAX_OVERFLOW,

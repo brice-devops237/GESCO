@@ -13,15 +13,18 @@ from app.modules.auth.service import login as auth_login
 router = APIRouter(prefix="/auth", tags=["Authentification"])
 
 
-@router.post("/login", response_model=auth_schemas.TokenResponse)
+@router.post(
+    "/login",
+    response_model=auth_schemas.TokenResponse,
+    summary="Connexion",
+    description="Authentification par entreprise, login et mot de passe. Retourne un JWT à passer dans l'en-tête Authorization: Bearer <token>.",
+    response_description="Token JWT et type (bearer).",
+)
 async def login(
     db: DbSession,
     data: auth_schemas.LoginRequest,
 ):
-    """
-    Authentification : vérifie entreprise_id, login et mot de passe.
-    Retourne un token JWT à utiliser dans le header Authorization: Bearer <token>.
-    """
+    """Authentification : vérifie entreprise_id, login et mot de passe. Retourne un token JWT."""
     access_token = await auth_login(
         db,
         entreprise_id=data.entreprise_id,

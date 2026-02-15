@@ -1,11 +1,18 @@
 # Gesco
 
-**Système de gestion intégré (ERP)** – API backend multi-entreprises conçue pour le marché camerounais et la zone CEMAC. Gesco couvre l’ensemble du cycle de gestion : paramétrage, catalogue, partenaires (clients/fournisseurs), ventes (devis, commandes, factures, bons de livraison), achats (commandes fournisseurs, réceptions, factures fournisseurs), **stock**, **trésorerie** (modes de paiement, comptes, règlements), **comptabilité** (plan comptable, journaux, périodes, écritures), **ressources humaines** (employés, départements, postes, congés, objectifs, commissions, avances), **paie** (périodes, bulletins, types d’éléments), **immobilisations** (catégories et actifs), **système** (paramètres, audit, notifications, licence) et **rapports** (tableaux de bord, chiffre d’affaires). Conforme au droit camerounais (CGI, DGI, NIU, CEMAC) et aux normes internationales (ISO 3166, ISO 4217).
+**API backend ERP** multi-entreprises pour le **Cameroun et la zone CEMAC** : FastAPI, SQLAlchemy 2 (async), JWT, plan comptable OHADA. Couvre tout le cycle (paramétrage, catalogue, partenaires, ventes, achats, stock, trésorerie, comptabilité, RH, paie, immobilisations, système, rapports). Conforme CGI, NIU, TVA, XAF.
+
+| | |
+|---|---|
+| **Documentation interactive** | [http://localhost:8000/docs](http://localhost:8000/docs) (Swagger, tags par ressource) |
+| **Santé API** | [http://localhost:8000/health](http://localhost:8000/health) |
+| **Préfixe API** | `/api/v1` |
 
 ---
 
 ## Sommaire
 
+- [Démarrage rapide](#démarrage-rapide)
 - [Vue d’ensemble](#vue-densemble)
 - [Fonctionnalités par domaine](#fonctionnalités-par-domaine)
 - [Stack technique](#stack-technique)
@@ -19,6 +26,38 @@
 - [Structure du projet](#structure-du-projet)
 - [Migrations et tests](#migrations-et-tests)
 - [Licence](#licence)
+
+---
+
+## Démarrage rapide
+
+**Avec SQLite** (par défaut, pas de PostgreSQL requis) :
+
+```bash
+git clone https://github.com/brice-devops237/GESCO.git
+cd Gesco
+python -m venv .venv
+.venv\Scripts\activate   # Windows  |  source .venv/bin/activate  # Linux/macOS
+pip install -r requirements.txt
+```
+
+Créer un fichier **`.env`** à la racine avec au minimum :  
+`SECRET_KEY=une-cle-secrete-d-au-moins-32-caracteres-pour-jwt`
+
+```bash
+uvicorn app.main:app --reload --host 127.0.0.1 --port 8000
+```
+
+→ **API** : [http://127.0.0.1:8000](http://127.0.0.1:8000) · **Docs** : [http://127.0.0.1:8000/docs](http://127.0.0.1:8000/docs) · **Santé** : [http://127.0.0.1:8000/health](http://127.0.0.1:8000/health)
+
+La base SQLite est créée automatiquement dans `app/db/gesco.db`. Schéma : `alembic upgrade head`. Données de démo (Cameroun) : `python scripts/seed_data.py`.
+
+**Avec PostgreSQL et Docker** :
+
+```bash
+docker compose up -d
+# API sur http://localhost:8000 ; définir DATABASE_URL / DATABASE_URL_SYNC / SECRET_KEY dans .env ou docker-compose
+```
 
 ---
 
@@ -64,7 +103,7 @@ L’architecture est **modulaire** : chaque domaine métier (Auth, Paramétrage,
 | **Langage** | Python 3.12 |
 | **Framework API** | FastAPI |
 | **ORM** | SQLAlchemy 2 (asynchrone) |
-| **Base de données** | PostgreSQL (async : asyncpg ; synchrone : psycopg2 pour Alembic) |
+| **Base de données** | SQLite (défaut, portable) ou PostgreSQL (async : asyncpg ; synchrone : psycopg2 pour Alembic) |
 | **Validation & config** | Pydantic, pydantic-settings, python-dotenv |
 | **Authentification** | JWT (python-jose), passlib/bcrypt pour les mots de passe |
 | **Migrations** | Alembic |
@@ -155,7 +194,7 @@ Exemples : `GET/POST/PATCH /commandes-fournisseurs`, `/receptions`, `/factures-f
 |--------|-------|-------------|
 | GET/POST/PATCH | `/modes-paiement`, `/modes-paiement/{id}` | Modes de paiement |
 | GET/POST/PATCH | `/comptes`, `/comptes/{id}` | Comptes de trésorerie |
-| GET/POST/PATCH | `/reglements`, `/reglements/{id}` | Règlements |
+| GET/POST | `/reglements`, `/reglements/{id}` | Règlements (lecture et création ; pas de PATCH) |
 
 ---
 
@@ -204,6 +243,7 @@ Exemples : `GET/POST/PATCH /commandes-fournisseurs`, `/receptions`, `/factures-f
 |--------|-------|-------------|
 | GET/POST/PATCH | `/categories`, `/categories/{id}` | Catégories d’immobilisations |
 | GET/POST/PATCH | `/actifs`, `/actifs/{id}` | Actifs immobilisés |
+| GET | `/actifs/{id}/lignes-amortissement` | Lignes d'amortissement d'un actif (lecture seule) |
 
 ---
 
@@ -213,8 +253,11 @@ Exemples : `GET/POST/PATCH /commandes-fournisseurs`, `/receptions`, `/factures-f
 |--------|-------|-------------|
 | GET/POST/PATCH | `/parametres`, `/parametres/{id}` | Paramètres système |
 | GET/POST | `/audit`, `/audit/{id}` | Journal d’audit |
-| GET/POST/PATCH | `/notifications`, `/notifications/{id}` | Notifications |
-| GET/POST/PATCH | `/licence` | Licence logicielle |
+| GET/POST/PATCH | `/notifications`, `/notifications/{id}` | Notifications, `POST .../marquer-lue` |
+| GET/POST/PATCH | `/licences`, `/licences/{id}` | Licences logicielles |
+| GET | `/licences/verifier` | Vérification validité licence |
+| POST | `/licences/{id}/activer`, `/licences/{id}/prolonger` | Activation, prolongation |
+| GET | `/licences/{id}/info-prolongations` | Nombre de prolongations utilisées / restantes |
 
 ---
 
@@ -227,11 +270,14 @@ Exemples : `GET/POST/PATCH /commandes-fournisseurs`, `/receptions`, `/factures-f
 
 ---
 
-### Santé (hors préfixe API)
+### Santé et racine (hors préfixe API)
 
 | Méthode | Route | Description |
 |--------|-------|-------------|
+| GET | `/` | Informations API (nom, version, préfixe, lien docs) |
 | GET | `/health` | Santé de l’API (sans auth, sans DB) – pour load balancer et monitoring |
+
+**Documentation OpenAPI** : `/docs` (Swagger) et `/redoc`. Les opérations sont **segmentées par tag** (une ressource par tag : ex. « Paramétrage - Entreprises », « Catalogue - Produits »). L’authentification JWT Bearer est préconfigurée dans Swagger (bouton *Authorize*).
 
 ---
 
@@ -344,7 +390,7 @@ Modes de paiement, comptes de trésorerie (caisse / bancaire), règlements (clie
 **Opérations (résumé)**  
 - **Modes de paiement** : GET liste (entreprise_id, actif_only), GET/POST/PATCH. **Exceptions** : 404 (MODE_PAIEMENT_NOT_FOUND), 400/409 (MODE_PAIEMENT_CODE_VIDE, MODE_PAIEMENT_CODE_EXISTS).  
 - **Comptes trésorerie** : GET liste, GET/POST/PATCH. **Exceptions** : 404 (COMPTE_TRESORERIE_NOT_FOUND, DEVISE_NOT_FOUND), 400 (TYPE_COMPTE_INVALIDE).  
-- **Règlements** : GET liste, GET/POST/PATCH. **Exceptions** : 404 (REGLEMENT_NOT_FOUND, TIERS_NOT_FOUND, FACTURE_NOT_FOUND, FACTURE_FOURNISSEUR_NOT_FOUND) ; 400 (TYPE_REGLEMENT_INVALIDE, REGLEMENT_FACTURE_OBLIGATOIRE, REGLEMENT_FACTURE_FOURNISSEUR_OBLIGATOIRE, REGLEMENT_MONTANT_POSITIF).
+- **Règlements** : GET liste, GET/POST (pas de PATCH). **Exceptions** : 404 (REGLEMENT_NOT_FOUND, TIERS_NOT_FOUND, FACTURE_NOT_FOUND, FACTURE_FOURNISSEUR_NOT_FOUND) ; 400 (TYPE_REGLEMENT_INVALIDE, REGLEMENT_FACTURE_OBLIGATOIRE, REGLEMENT_FACTURE_FOURNISSEUR_OBLIGATOIRE, REGLEMENT_MONTANT_POSITIF).
 
 ---
 
@@ -527,13 +573,20 @@ CRUD commandes-fournisseurs, receptions, factures-fournisseurs. **Nominal** : 20
 
 Le fichier **`.env`** à la racine est chargé par **pydantic-settings**. Noms des variables en MAJUSCULES.
 
-### Obligatoires
+### Obligatoire
 
 | Variable | Description |
 |----------|-------------|
-| `DATABASE_URL` | URL PostgreSQL **asynchrone** pour l’API (ex. `postgresql+asyncpg://user:pass@localhost:5432/gesco`) |
-| `DATABASE_URL_SYNC` | URL PostgreSQL **synchrone** pour Alembic / scripts (ex. `postgresql://user:pass@localhost:5432/gesco`) |
 | `SECRET_KEY` | Clé secrète JWT (au moins 32 caractères) |
+
+### Base de données (optionnel si SQLite)
+
+Par défaut, l’application utilise **SQLite** (`app/db/gesco.db`). Pour utiliser **PostgreSQL**, définir :
+
+| Variable | Description |
+|----------|-------------|
+| `DATABASE_URL` | URL **asynchrone** (ex. `postgresql+asyncpg://user:pass@localhost:5432/gesco` ou défaut `sqlite+aiosqlite:///./app/db/gesco.db`) |
+| `DATABASE_URL_SYNC` | URL **synchrone** pour Alembic / scripts (ex. `postgresql://user:pass@localhost:5432/gesco` ou défaut `sqlite:///./app/db/gesco.db`) |
 
 ### Optionnelles (valeurs par défaut)
 
@@ -574,31 +627,19 @@ Le fichier **`.env`** à la racine est chargé par **pydantic-settings**. Noms d
 
 ## Installation et lancement
 
+Voir **[Démarrage rapide](#démarrage-rapide)** pour un premier lancement avec SQLite.
+
+Résumé : créer un **`.env`** avec au minimum `SECRET_KEY=...` (32 caractères min), puis :
+
 ```bash
-git clone <url-du-repo>
-cd Gesco
-
-python -m venv .venv
-# Windows
-.venv\Scripts\activate
-# Linux / macOS
-# source .venv/bin/activate
-
 pip install -r requirements.txt
-```
-
-Créer le fichier **`.env`** à la racine avec au minimum : `DATABASE_URL`, `DATABASE_URL_SYNC`, `SECRET_KEY`.
-
-```bash
-# Développement
 uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
-
-# Production
-uvicorn app.main:app --host 0.0.0.0 --port 8000
 ```
+
+Avec **PostgreSQL** : définir `DATABASE_URL` et `DATABASE_URL_SYNC` dans `.env`, ou utiliser **Docker** : `docker compose up -d` (API + PostgreSQL sur le port 8000).
 
 - **API** : `http://localhost:8000`  
-- **Swagger (OpenAPI)** : `http://localhost:8000/docs`  
+- **Swagger (OpenAPI)** : `http://localhost:8000/docs` (tags par ressource, auth Bearer)  
 - **ReDoc** : `http://localhost:8000/redoc`  
 - **Santé** : `http://localhost:8000/health`  
 
@@ -631,36 +672,41 @@ Le référentiel partagé (constantes et helpers) est dans **`app/shared/regulat
 ```
 Gesco/
 ├── app/
-│   ├── main.py                    # Point d'entrée FastAPI, CORS, exceptions, lifespan, routeurs
-│   ├── config.py                  # Settings (pydantic-settings, .env)
+│   ├── main.py                    # Point d'entrée FastAPI, CORS, exceptions, lifespan, OpenAPI tags
+│   ├── config.py                  # Settings (pydantic-settings, .env, défaut SQLite)
 │   ├── core/
 │   │   ├── database.py            # Moteur async, session, Base SQLAlchemy
 │   │   ├── dependencies.py        # DbSession (injection session)
-│   │   ├── exceptions.py         # AppHTTPException, NotFound, Conflict, BadRequest, Unauthorized, Forbidden
-│   │   ├── security.py           # JWT (create/decode), bcrypt (hash/verify)
-│   │   └── service_base.py       # BaseService (_raise_*, _validate_enum)
+│   │   ├── exceptions.py          # AppHTTPException, NotFound, Conflict, BadRequest, Unauthorized, Forbidden
+│   │   ├── security.py            # JWT (create/decode), bcrypt (hash/verify)
+│   │   └── service_base.py        # BaseService (_raise_*, _validate_enum)
 │   ├── shared/
-│   │   ├── regulations.py        # Référentiel Cameroun / international (pays, devise, NIU, TVA)
-│   │   ├── schemas/
-│   │   │   └── common.py         # Pagination, PaginatedResponse
-│   │   └── utils/                # Calculs, audit, numérotation
+│   │   ├── regulations.py         # Référentiel Cameroun / international (pays, devise, NIU, TVA)
+│   │   ├── schemas/common.py      # Pagination, PaginatedResponse
+│   │   └── utils/                 # Calculs, audit, numérotation
 │   └── modules/
-│       ├── auth/                 # Login JWT
-│       ├── parametrage/          # Entreprises, devises, PDV, rôles, permissions, utilisateurs
-│       ├── catalogue/            # Produits, familles, conditionnements, prix, canaux
-│       ├── partenaires/          # Tiers, contacts
-│       ├── commercial/           # Devis, commandes, factures, BL
-│       ├── achats/               # Commandes fournisseurs, réceptions, factures fournisseurs
-│       ├── stock/                # Stocks, mouvements, alertes
-│       ├── tresorerie/           # Modes paiement, comptes, règlements
-│       ├── comptabilite/         # Comptes, journaux, périodes, écritures
-│       ├── rh/                   # Départements, postes, employés, congés, objectifs, commissions, avances
-│       ├── paie/                 # Périodes paie, types élément, bulletins
-│       ├── immobilisations/      # Catégories, actifs
-│       ├── systeme/              # Paramètres, audit, notifications, licence
-│       └── rapports/             # Chiffre d'affaires, dashboard
+│       ├── auth/                  # Login JWT
+│       ├── parametrage/           # Entreprises, devises, PDV, rôles, permissions, utilisateurs
+│       ├── catalogue/             # Produits, familles, conditionnements, prix, canaux
+│       ├── partenaires/           # Tiers, contacts
+│       ├── commercial/            # Devis, commandes, factures, BL
+│       ├── achats/                # Commandes fournisseurs, réceptions, factures fournisseurs
+│       ├── stock/                 # Stocks, mouvements, alertes
+│       ├── tresorerie/            # Modes paiement, comptes, règlements
+│       ├── comptabilite/          # Comptes, journaux, périodes, écritures
+│       ├── rh/                    # Départements, postes, employés, congés, objectifs, commissions, avances
+│       ├── paie/                  # Périodes paie, types élément, bulletins
+│       ├── immobilisations/       # Catégories, actifs, lignes d'amortissement
+│       ├── systeme/               # Paramètres, audit, notifications, licences
+│       └── rapports/              # Chiffre d'affaires, dashboard
+├── alembic/                       # Migrations (upgrade head, autogenerate)
+├── scripts/
+│   └── seed_data.py              # Données de démo (Cameroun, 62 tables)
 ├── requirements.txt
-├── .env                          # À créer (non versionné)
+├── pyproject.toml                 # Métadonnées projet, ruff, pytest
+├── Dockerfile
+├── docker-compose.yml             # API + PostgreSQL
+├── .env                           # À créer (SECRET_KEY obligatoire)
 ├── .gitignore
 └── README.md
 ```
@@ -671,11 +717,11 @@ Dans chaque module métier : **models.py** (entités ORM), **schemas.py** (Creat
 
 ## Migrations et tests
 
-**Alembic** (URL synchrone dans `.env`) :
+**Alembic** (utilise `DATABASE_URL_SYNC` : SQLite ou PostgreSQL) :
 
 ```bash
-alembic revision --autogenerate -m "Description"
-alembic upgrade head
+alembic upgrade head              # Appliquer les migrations
+alembic revision --autogenerate -m "Description"   # Nouvelle révision
 ```
 
 **Tests** :
@@ -684,6 +730,8 @@ alembic upgrade head
 pytest
 pytest --cov=app
 ```
+
+**Qualité du code** : `ruff check .` (config dans `pyproject.toml`).
 
 ---
 

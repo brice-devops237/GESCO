@@ -1,0 +1,31 @@
+# CI Gesco : lint et vérification d'import (pas d'exécution des tests)
+name: CI
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Installer Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Installer les dépendances
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install ".[dev]"
+
+      - name: Ruff (lint)
+        run: ruff check app tests
+
+      - name: Vérifier l'import de l'app
+        run: python -c "from app.main import app; print('OK')"

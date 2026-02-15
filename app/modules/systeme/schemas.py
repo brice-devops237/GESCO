@@ -33,6 +33,7 @@ class ParametreSystemeResponse(BaseModel):
     valeur: Optional[str] = None
     description: Optional[str] = None
     created_at: datetime
+    updated_at: datetime
 
 
 # --- Journal d'audit ---
@@ -148,6 +149,7 @@ class LicenceLogicielleResponse(BaseModel):
     nombre_prolongations: int = 0
     date_activation: Optional[datetime] = None
     created_at: datetime
+    updated_at: datetime
 
 
 class LicenceProlongationsInfo(BaseModel):

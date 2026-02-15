@@ -36,13 +36,16 @@ class Settings(BaseSettings):
     FRONTEND_URL: str = Field(default="http://localhost:3000", description="URL du frontend (CORS, redirections)")
 
     # --- Base de données ---
+    # Par défaut : SQLite portable (app/db/gesco.db). Sinon : PostgreSQL via .env
+    # SQLite async : sqlite+aiosqlite:///./app/db/gesco.db
+    # SQLite sync (Alembic) : sqlite:///./app/db/gesco.db
     DATABASE_URL: str = Field(
-        ...,
-        description="URL de connexion PostgreSQL asynchrone (asyncpg)",
+        default="sqlite+aiosqlite:///./app/db/gesco.db",
+        description="URL de connexion asynchrone (asyncpg ou aiosqlite pour SQLite)",
     )
     DATABASE_URL_SYNC: str = Field(
-        ...,
-        description="URL de connexion PostgreSQL synchrone (Alembic, scripts)",
+        default="sqlite:///./app/db/gesco.db",
+        description="URL de connexion synchrone (Alembic, scripts : psycopg2 ou sqlite)",
     )
     DATABASE_POOL_SIZE: int = Field(default=5, ge=1, le=50, description="Taille du pool de connexions")
     DATABASE_MAX_OVERFLOW: int = Field(default=10, ge=0, description="Connexions supplémentaires autorisées")

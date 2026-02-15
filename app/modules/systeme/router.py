@@ -16,11 +16,16 @@ from app.modules.systeme.services import (
     LicenceLogicielleService,
 )
 
-router = APIRouter(prefix="/systeme", tags=["Système"])
+router = APIRouter(prefix="/systeme")
+
+TAG_PARAMETRES = "Système - Paramètres"
+TAG_JOURNAL_AUDIT = "Système - Journal d'audit"
+TAG_NOTIFICATIONS = "Système - Notifications"
+TAG_LICENCES = "Système - Licences logicielles"
 
 
 # --- Paramètres système ---
-@router.get("/parametres", response_model=list[schemas.ParametreSystemeResponse])
+@router.get("/parametres", response_model=list[schemas.ParametreSystemeResponse], tags=[TAG_PARAMETRES])
 async def list_parametres_systeme(
     db: DbSession,
     current_user: CurrentUser,
@@ -38,23 +43,23 @@ async def list_parametres_systeme(
     return items
 
 
-@router.get("/parametres/{id}", response_model=schemas.ParametreSystemeResponse)
+@router.get("/parametres/{id}", response_model=schemas.ParametreSystemeResponse, tags=[TAG_PARAMETRES])
 async def get_parametre_systeme(db: DbSession, current_user: CurrentUser, id: int):
     return await ParametreSystemeService(db).get_or_404(id)
 
 
-@router.post("/parametres", response_model=schemas.ParametreSystemeResponse, status_code=201)
+@router.post("/parametres", response_model=schemas.ParametreSystemeResponse, status_code=201, tags=[TAG_PARAMETRES])
 async def create_parametre_systeme(db: DbSession, current_user: CurrentUser, data: schemas.ParametreSystemeCreate):
     return await ParametreSystemeService(db).create(data)
 
 
-@router.patch("/parametres/{id}", response_model=schemas.ParametreSystemeResponse)
+@router.patch("/parametres/{id}", response_model=schemas.ParametreSystemeResponse, tags=[TAG_PARAMETRES])
 async def update_parametre_systeme(db: DbSession, current_user: CurrentUser, id: int, data: schemas.ParametreSystemeUpdate):
     return await ParametreSystemeService(db).update(id, data)
 
 
 # --- Journal d'audit ---
-@router.get("/audit", response_model=list[schemas.JournalAuditResponse])
+@router.get("/audit", response_model=list[schemas.JournalAuditResponse], tags=[TAG_JOURNAL_AUDIT])
 async def list_journal_audit(
     db: DbSession,
     current_user: CurrentUser,
@@ -80,18 +85,18 @@ async def list_journal_audit(
     return items
 
 
-@router.get("/audit/{id}", response_model=schemas.JournalAuditResponse)
+@router.get("/audit/{id}", response_model=schemas.JournalAuditResponse, tags=[TAG_JOURNAL_AUDIT])
 async def get_journal_audit(db: DbSession, current_user: CurrentUser, id: int):
     return await AuditService(db).get_or_404(id)
 
 
-@router.post("/audit", response_model=schemas.JournalAuditResponse, status_code=201)
+@router.post("/audit", response_model=schemas.JournalAuditResponse, status_code=201, tags=[TAG_JOURNAL_AUDIT])
 async def create_entree_audit(db: DbSession, current_user: CurrentUser, data: schemas.JournalAuditCreate):
     return await AuditService(db).create(data)
 
 
 # --- Notifications ---
-@router.get("/notifications", response_model=list[schemas.NotificationResponse])
+@router.get("/notifications", response_model=list[schemas.NotificationResponse], tags=[TAG_NOTIFICATIONS])
 async def list_notifications(
     db: DbSession,
     current_user: CurrentUser,
@@ -108,29 +113,29 @@ async def list_notifications(
     return items
 
 
-@router.get("/notifications/{id}", response_model=schemas.NotificationResponse)
+@router.get("/notifications/{id}", response_model=schemas.NotificationResponse, tags=[TAG_NOTIFICATIONS])
 async def get_notification(db: DbSession, current_user: CurrentUser, id: int):
     return await NotificationService(db).get_or_404_for_user(id, current_user.id)
 
 
-@router.post("/notifications", response_model=schemas.NotificationResponse, status_code=201)
+@router.post("/notifications", response_model=schemas.NotificationResponse, status_code=201, tags=[TAG_NOTIFICATIONS])
 async def create_notification(db: DbSession, current_user: CurrentUser, data: schemas.NotificationCreate):
     return await NotificationService(db).create(data)
 
 
-@router.patch("/notifications/{id}", response_model=schemas.NotificationResponse)
+@router.patch("/notifications/{id}", response_model=schemas.NotificationResponse, tags=[TAG_NOTIFICATIONS])
 async def update_notification(db: DbSession, current_user: CurrentUser, id: int, data: schemas.NotificationUpdate):
     await NotificationService(db).get_or_404_for_user(id, current_user.id)
     return await NotificationService(db).update(id, data)
 
 
-@router.post("/notifications/{id}/marquer-lue", response_model=schemas.NotificationResponse)
+@router.post("/notifications/{id}/marquer-lue", response_model=schemas.NotificationResponse, tags=[TAG_NOTIFICATIONS])
 async def marquer_notification_lue(db: DbSession, current_user: CurrentUser, id: int):
     return await NotificationService(db).marquer_lue(id, current_user.id)
 
 
 # --- Licences logicielles (validité 1 an) ---
-@router.get("/licences", response_model=list[schemas.LicenceLogicielleResponse])
+@router.get("/licences", response_model=list[schemas.LicenceLogicielleResponse], tags=[TAG_LICENCES])
 async def list_licences(
     db: DbSession,
     current_user: CurrentUser,
@@ -150,7 +155,7 @@ async def list_licences(
     return items
 
 
-@router.get("/licences/verifier", response_model=schemas.LicenceValideResponse)
+@router.get("/licences/verifier", response_model=schemas.LicenceValideResponse, tags=[TAG_LICENCES])
 async def verifier_licence(
     db: DbSession,
     current_user: CurrentUser,
@@ -161,29 +166,29 @@ async def verifier_licence(
     return schemas.LicenceValideResponse(valide=valide, message=message, date_fin=date_fin)
 
 
-@router.get("/licences/{id}", response_model=schemas.LicenceLogicielleResponse)
+@router.get("/licences/{id}", response_model=schemas.LicenceLogicielleResponse, tags=[TAG_LICENCES])
 async def get_licence(db: DbSession, current_user: CurrentUser, id: int):
     return await LicenceLogicielleService(db).get_or_404(id)
 
 
-@router.post("/licences", response_model=schemas.LicenceLogicielleResponse, status_code=201)
+@router.post("/licences", response_model=schemas.LicenceLogicielleResponse, status_code=201, tags=[TAG_LICENCES])
 async def create_licence(db: DbSession, current_user: CurrentUser, data: schemas.LicenceLogicielleCreate):
     """Crée une licence. Durée selon type : trial 2 mois, standard 6 mois, premium 12 mois."""
     return await LicenceLogicielleService(db).create(data)
 
 
-@router.patch("/licences/{id}", response_model=schemas.LicenceLogicielleResponse)
+@router.patch("/licences/{id}", response_model=schemas.LicenceLogicielleResponse, tags=[TAG_LICENCES])
 async def update_licence(db: DbSession, current_user: CurrentUser, id: int, data: schemas.LicenceLogicielleUpdate):
     return await LicenceLogicielleService(db).update(id, data)
 
 
-@router.post("/licences/{id}/activer", response_model=schemas.LicenceLogicielleResponse)
+@router.post("/licences/{id}/activer", response_model=schemas.LicenceLogicielleResponse, tags=[TAG_LICENCES])
 async def activer_licence(db: DbSession, current_user: CurrentUser, id: int):
     """Enregistre la date d'activation de la licence (première utilisation)."""
     return await LicenceLogicielleService(db).activer(id)
 
 
-@router.post("/licences/{id}/prolonger", response_model=schemas.LicenceLogicielleResponse)
+@router.post("/licences/{id}/prolonger", response_model=schemas.LicenceLogicielleResponse, tags=[TAG_LICENCES])
 async def prolonger_licence(db: DbSession, current_user: CurrentUser, id: int):
     """
     Prolonge la licence : ajoute la durée du type à la date de fin actuelle.
@@ -192,7 +197,7 @@ async def prolonger_licence(db: DbSession, current_user: CurrentUser, id: int):
     return await LicenceLogicielleService(db).prolonger(id)
 
 
-@router.get("/licences/{id}/info-prolongations", response_model=schemas.LicenceProlongationsInfo)
+@router.get("/licences/{id}/info-prolongations", response_model=schemas.LicenceProlongationsInfo, tags=[TAG_LICENCES])
 async def info_prolongations_licence(db: DbSession, current_user: CurrentUser, id: int):
     """Retourne le nombre de prolongations utilisées et restantes (trial/standard : max 3, premium : illimité)."""
     ent = await LicenceLogicielleService(db).get_or_404(id)

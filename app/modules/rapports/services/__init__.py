@@ -1,7 +1,4 @@
 # app/modules/rapports/services
-from app.modules.rapports.services.dashboard import (
-    get_chiffre_affaires,
-    get_synthese_dashboard,
-)
+from app.modules.rapports.services.dashboard import RapportsService
 
-__all__ = ["get_chiffre_affaires", "get_synthese_dashboard"]
+__all__ = ["RapportsService"]

@@ -17,7 +17,7 @@ from sqlalchemy import (
     Text,
     UniqueConstraint,
 )
-from sqlalchemy.dialects.postgresql import JSONB
+from sqlalchemy import JSON
 from sqlalchemy.orm import Mapped, mapped_column
 
 from app.core.database import Base
@@ -64,7 +64,7 @@ class JournalAudit(Base):
     module: Mapped[str] = mapped_column(String(50), nullable=True, index=True)  # comptabilite, rh, etc.
     entite_type: Mapped[str] = mapped_column(String(80), nullable=True, index=True)
     entite_id: Mapped[int | None] = mapped_column(Integer, nullable=True)
-    details: Mapped[dict | None] = mapped_column(JSONB, nullable=True)
+    details: Mapped[dict | None] = mapped_column(JSON, nullable=True)
     ip_address: Mapped[str] = mapped_column(String(45), nullable=True)
     user_agent: Mapped[str] = mapped_column(String(500), nullable=True)
     created_at: Mapped[datetime] = mapped_column(DateTime, nullable=False, default=datetime.utcnow)

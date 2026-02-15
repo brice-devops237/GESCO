@@ -35,6 +35,7 @@ class CompteComptableResponse(BaseModel):
     sens_normal: str
     actif: bool
     created_at: datetime
+    updated_at: datetime
 
 
 # --- Journal comptable ---
@@ -59,6 +60,7 @@ class JournalComptableResponse(BaseModel):
     libelle: str
     actif: bool
     created_at: datetime
+    updated_at: datetime
 
 
 # --- Période comptable ---

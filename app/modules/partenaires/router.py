@@ -11,12 +11,16 @@ from app.modules.parametrage.dependencies import CurrentUser
 from app.modules.partenaires import schemas
 from app.modules.partenaires.services import ContactService, TiersService, TypeTiersService
 
-router = APIRouter(prefix="/partenaires", tags=["Partenaires"])
+router = APIRouter(prefix="/partenaires")
+
+TAG_TYPES_TIERS = "Partenaires - Types de tiers"
+TAG_TIERS = "Partenaires - Tiers"
+TAG_CONTACTS = "Partenaires - Contacts"
 
 
 # --- Types de tiers ---
 
-@router.get("/types-tiers", response_model=list[schemas.TypeTiersResponse])
+@router.get("/types-tiers", response_model=list[schemas.TypeTiersResponse], tags=[TAG_TYPES_TIERS])
 async def list_types_tiers(
     db: DbSession,
     current_user: CurrentUser,
@@ -27,13 +31,13 @@ async def list_types_tiers(
     return await TypeTiersService(db).get_all(skip=skip, limit=limit)
 
 
-@router.get("/types-tiers/{id}", response_model=schemas.TypeTiersResponse)
+@router.get("/types-tiers/{id}", response_model=schemas.TypeTiersResponse, tags=[TAG_TYPES_TIERS])
 async def get_type_tiers(db: DbSession, current_user: CurrentUser, id: int):
     """Détail d'un type de tiers."""
     return await TypeTiersService(db).get_or_404(id)
 
 
-@router.post("/types-tiers", response_model=schemas.TypeTiersResponse, status_code=201)
+@router.post("/types-tiers", response_model=schemas.TypeTiersResponse, status_code=201, tags=[TAG_TYPES_TIERS])
 async def create_type_tiers(
     db: DbSession,
     current_user: CurrentUser,
@@ -43,7 +47,7 @@ async def create_type_tiers(
     return await TypeTiersService(db).create(data)
 
 
-@router.patch("/types-tiers/{id}", response_model=schemas.TypeTiersResponse)
+@router.patch("/types-tiers/{id}", response_model=schemas.TypeTiersResponse, tags=[TAG_TYPES_TIERS])
 async def update_type_tiers(
     db: DbSession,
     current_user: CurrentUser,
@@ -56,7 +60,7 @@ async def update_type_tiers(
 
 # --- Tiers (clients / fournisseurs) ---
 
-@router.get("/tiers", response_model=list[schemas.TiersResponse])
+@router.get("/tiers", response_model=list[schemas.TiersResponse], tags=[TAG_TIERS])
 async def list_tiers(
     db: DbSession,
     current_user: CurrentUser,
@@ -79,7 +83,7 @@ async def list_tiers(
     return items
 
 
-@router.post("/tiers", response_model=schemas.TiersResponse, status_code=201)
+@router.post("/tiers", response_model=schemas.TiersResponse, status_code=201, tags=[TAG_TIERS])
 async def create_tiers(
     db: DbSession,
     current_user: CurrentUser,
@@ -89,7 +93,7 @@ async def create_tiers(
     return await TiersService(db).create(data)
 
 
-@router.get("/tiers/{tiers_id}/contacts", response_model=list[schemas.ContactResponse])
+@router.get("/tiers/{tiers_id}/contacts", response_model=list[schemas.ContactResponse], tags=[TAG_CONTACTS])
 async def list_contacts_by_tiers(
     db: DbSession,
     current_user: CurrentUser,
@@ -105,13 +109,13 @@ async def list_contacts_by_tiers(
     return items
 
 
-@router.get("/tiers/{id}", response_model=schemas.TiersResponse)
+@router.get("/tiers/{id}", response_model=schemas.TiersResponse, tags=[TAG_TIERS])
 async def get_tiers(db: DbSession, current_user: CurrentUser, id: int):
     """Détail d'un tiers."""
     return await TiersService(db).get_or_404(id)
 
 
-@router.patch("/tiers/{id}", response_model=schemas.TiersResponse)
+@router.patch("/tiers/{id}", response_model=schemas.TiersResponse, tags=[TAG_TIERS])
 async def update_tiers(
     db: DbSession,
     current_user: CurrentUser,
@@ -122,7 +126,7 @@ async def update_tiers(
     return await TiersService(db).update(id, data)
 
 
-@router.delete("/tiers/{id}", status_code=204)
+@router.delete("/tiers/{id}", status_code=204, tags=[TAG_TIERS])
 async def delete_tiers(db: DbSession, current_user: CurrentUser, id: int):
     """Soft delete d'un tiers."""
     await TiersService(db).delete_soft(id)
@@ -130,7 +134,7 @@ async def delete_tiers(db: DbSession, current_user: CurrentUser, id: int):
 
 # --- Contacts ---
 
-@router.post("/contacts", response_model=schemas.ContactResponse, status_code=201)
+@router.post("/contacts", response_model=schemas.ContactResponse, status_code=201, tags=[TAG_CONTACTS])
 async def create_contact(
     db: DbSession,
     current_user: CurrentUser,
@@ -140,13 +144,13 @@ async def create_contact(
     return await ContactService(db).create(data)
 
 
-@router.get("/contacts/{id}", response_model=schemas.ContactResponse)
+@router.get("/contacts/{id}", response_model=schemas.ContactResponse, tags=[TAG_CONTACTS])
 async def get_contact(db: DbSession, current_user: CurrentUser, id: int):
     """Détail d'un contact."""
     return await ContactService(db).get_or_404(id)
 
 
-@router.patch("/contacts/{id}", response_model=schemas.ContactResponse)
+@router.patch("/contacts/{id}", response_model=schemas.ContactResponse, tags=[TAG_CONTACTS])
 async def update_contact(
     db: DbSession,
     current_user: CurrentUser,
@@ -157,7 +161,7 @@ async def update_contact(
     return await ContactService(db).update(id, data)
 
 
-@router.delete("/contacts/{id}", status_code=204)
+@router.delete("/contacts/{id}", status_code=204, tags=[TAG_CONTACTS])
 async def delete_contact(db: DbSession, current_user: CurrentUser, id: int):
     """Suppression d'un contact."""
     await ContactService(db).delete(id)

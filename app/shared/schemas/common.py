@@ -2,6 +2,10 @@
 # -----------------------------------------------------------------------------
 # Schémas Pydantic partagés (pagination, réponses génériques).
 # Aucun import depuis app.modules pour rester réutilisable partout.
+#
+# Stratégie pagination : les routes GET list retournent actuellement list[Schema].
+# Pour exposer une réponse paginée structurée (items + total + page + total_pages),
+# utiliser build_paginated_response() et response_model=PaginatedResponse[Schema].
 # -----------------------------------------------------------------------------
 
 from typing import Generic, TypeVar

@@ -10,11 +10,15 @@ from app.modules.parametrage.dependencies import CurrentUser
 from app.modules.paie import schemas
 from app.modules.paie.services import PeriodePaieService, TypeElementPaieService, BulletinPaieService
 
-router = APIRouter(prefix="/paie", tags=["Paie"])
+router = APIRouter(prefix="/paie")
+
+TAG_PERIODES_PAIE = "Paie - Périodes de paie"
+TAG_TYPES_ELEMENT_PAIE = "Paie - Types d'éléments de paie"
+TAG_BULLETINS_PAIE = "Paie - Bulletins de paie"
 
 
 # --- Périodes de paie ---
-@router.get("/periodes", response_model=list[schemas.PeriodePaieResponse])
+@router.get("/periodes", response_model=list[schemas.PeriodePaieResponse], tags=[TAG_PERIODES_PAIE])
 async def list_periodes_paie(
     db: DbSession,
     current_user: CurrentUser,
@@ -29,23 +33,23 @@ async def list_periodes_paie(
     return items
 
 
-@router.get("/periodes/{id}", response_model=schemas.PeriodePaieResponse)
+@router.get("/periodes/{id}", response_model=schemas.PeriodePaieResponse, tags=[TAG_PERIODES_PAIE])
 async def get_periode_paie(db: DbSession, current_user: CurrentUser, id: int):
     return await PeriodePaieService(db).get_or_404(id)
 
 
-@router.post("/periodes", response_model=schemas.PeriodePaieResponse, status_code=201)
+@router.post("/periodes", response_model=schemas.PeriodePaieResponse, status_code=201, tags=[TAG_PERIODES_PAIE])
 async def create_periode_paie(db: DbSession, current_user: CurrentUser, data: schemas.PeriodePaieCreate):
     return await PeriodePaieService(db).create(data)
 
 
-@router.patch("/periodes/{id}", response_model=schemas.PeriodePaieResponse)
+@router.patch("/periodes/{id}", response_model=schemas.PeriodePaieResponse, tags=[TAG_PERIODES_PAIE])
 async def update_periode_paie(db: DbSession, current_user: CurrentUser, id: int, data: schemas.PeriodePaieUpdate):
     return await PeriodePaieService(db).update(id, data)
 
 
 # --- Types d'éléments de paie ---
-@router.get("/types-element", response_model=list[schemas.TypeElementPaieResponse])
+@router.get("/types-element", response_model=list[schemas.TypeElementPaieResponse], tags=[TAG_TYPES_ELEMENT_PAIE])
 async def list_types_element_paie(
     db: DbSession,
     current_user: CurrentUser,
@@ -65,23 +69,23 @@ async def list_types_element_paie(
     return items
 
 
-@router.get("/types-element/{id}", response_model=schemas.TypeElementPaieResponse)
+@router.get("/types-element/{id}", response_model=schemas.TypeElementPaieResponse, tags=[TAG_TYPES_ELEMENT_PAIE])
 async def get_type_element_paie(db: DbSession, current_user: CurrentUser, id: int):
     return await TypeElementPaieService(db).get_or_404(id)
 
 
-@router.post("/types-element", response_model=schemas.TypeElementPaieResponse, status_code=201)
+@router.post("/types-element", response_model=schemas.TypeElementPaieResponse, status_code=201, tags=[TAG_TYPES_ELEMENT_PAIE])
 async def create_type_element_paie(db: DbSession, current_user: CurrentUser, data: schemas.TypeElementPaieCreate):
     return await TypeElementPaieService(db).create(data)
 
 
-@router.patch("/types-element/{id}", response_model=schemas.TypeElementPaieResponse)
+@router.patch("/types-element/{id}", response_model=schemas.TypeElementPaieResponse, tags=[TAG_TYPES_ELEMENT_PAIE])
 async def update_type_element_paie(db: DbSession, current_user: CurrentUser, id: int, data: schemas.TypeElementPaieUpdate):
     return await TypeElementPaieService(db).update(id, data)
 
 
 # --- Bulletins de paie ---
-@router.get("/bulletins", response_model=list[schemas.BulletinPaieResponse])
+@router.get("/bulletins", response_model=list[schemas.BulletinPaieResponse], tags=[TAG_BULLETINS_PAIE])
 async def list_bulletins_paie(
     db: DbSession,
     current_user: CurrentUser,
@@ -103,12 +107,12 @@ async def list_bulletins_paie(
     return items
 
 
-@router.get("/bulletins/{id}", response_model=schemas.BulletinPaieResponse)
+@router.get("/bulletins/{id}", response_model=schemas.BulletinPaieResponse, tags=[TAG_BULLETINS_PAIE])
 async def get_bulletin_paie(db: DbSession, current_user: CurrentUser, id: int):
     return await BulletinPaieService(db).get_or_404(id)
 
 
-@router.get("/bulletins/{id}/detail", response_model=schemas.BulletinPaieDetailResponse)
+@router.get("/bulletins/{id}/detail", response_model=schemas.BulletinPaieDetailResponse, tags=[TAG_BULLETINS_PAIE])
 async def get_bulletin_paie_detail(db: DbSession, current_user: CurrentUser, id: int):
     ent = await BulletinPaieService(db).get_by_id_with_lignes(id)
     if ent is None:
@@ -121,11 +125,11 @@ async def get_bulletin_paie_detail(db: DbSession, current_user: CurrentUser, id:
     )
 
 
-@router.post("/bulletins", response_model=schemas.BulletinPaieResponse, status_code=201)
+@router.post("/bulletins", response_model=schemas.BulletinPaieResponse, status_code=201, tags=[TAG_BULLETINS_PAIE])
 async def create_bulletin_paie(db: DbSession, current_user: CurrentUser, data: schemas.BulletinPaieCreate):
     return await BulletinPaieService(db).create(data)
 
 
-@router.patch("/bulletins/{id}", response_model=schemas.BulletinPaieResponse)
+@router.patch("/bulletins/{id}", response_model=schemas.BulletinPaieResponse, tags=[TAG_BULLETINS_PAIE])
 async def update_bulletin_paie(db: DbSession, current_user: CurrentUser, id: int, data: schemas.BulletinPaieUpdate):
     return await BulletinPaieService(db).update(id, data)

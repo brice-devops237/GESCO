@@ -32,6 +32,7 @@ class ModePaiementResponse(BaseModel):
     libelle: str
     actif: bool
     created_at: datetime
+    updated_at: datetime
 
 
 # --- Compte trésorerie ---
@@ -59,6 +60,7 @@ class CompteTresorerieResponse(BaseModel):
     devise_id: int
     actif: bool
     created_at: datetime
+    updated_at: datetime
 
 
 # --- Règlement ---
