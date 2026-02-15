@@ -19,19 +19,23 @@ class BaseService:
     def __init__(self, db: AsyncSession) -> None:
         self._db = db
 
-    def _raise_not_found(self, message: str) -> None:
+    @staticmethod
+    def _raise_not_found(message: str) -> None:
         """Lève NotFoundError (404) avec le message fourni."""
         raise NotFoundError(detail=message)
 
-    def _raise_conflict(self, message: str) -> None:
+    @staticmethod
+    def _raise_conflict(message: str) -> None:
         """Lève ConflictError (409) avec le message fourni."""
         raise ConflictError(detail=message)
 
-    def _raise_bad_request(self, message: str) -> None:
+    @staticmethod
+    def _raise_bad_request(message: str) -> None:
         """Lève BadRequestError (400) avec le message fourni."""
         raise BadRequestError(detail=message)
 
-    def _validate_enum(self, value: str, enum_class: type[Enum], message_template: str) -> None:
+    @staticmethod
+    def _validate_enum(value: str, enum_class: type[Enum], message_template: str) -> None:
         """Vérifie que value est une valeur valide de l'enum. Sinon lève 400 (clé : valeur)."""
         if value is None:
             return
