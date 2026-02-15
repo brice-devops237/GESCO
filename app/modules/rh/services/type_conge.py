@@ -1,30 +1,30 @@
-# app/modules/rh/services/taux_commission.py
+# app/modules/rh/services/type_conge.py
 # -----------------------------------------------------------------------------
-# Service métier : taux de commission.
+# Service métier : types de congé (annuel, maladie, maternité, etc.).
 # -----------------------------------------------------------------------------
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.modules.rh.models import TauxCommission
-from app.modules.rh.repositories import TauxCommissionRepository
-from app.modules.rh.schemas import TauxCommissionCreate, TauxCommissionUpdate
+from app.modules.rh.models import TypeConge
+from app.modules.rh.repositories import TypeCongeRepository
+from app.modules.rh.schemas import TypeCongeCreate, TypeCongeUpdate
 from app.modules.rh.services.base import BaseRHService
 from app.modules.rh.services.messages import Messages
 from app.modules.parametrage.repositories import EntrepriseRepository
 
 
-class TauxCommissionService(BaseRHService):
+class TypeCongeService(BaseRHService):
     def __init__(self, db: AsyncSession) -> None:
         super().__init__(db)
-        self._repo = TauxCommissionRepository(db)
+        self._repo = TypeCongeRepository(db)
         self._entreprise_repo = EntrepriseRepository(db)
 
-    async def get_by_id(self, id: int) -> TauxCommission | None:
+    async def get_by_id(self, id: int) -> TypeConge | None:
         return await self._repo.find_by_id(id)
 
-    async def get_or_404(self, id: int) -> TauxCommission:
+    async def get_or_404(self, id: int) -> TypeConge:
         ent = await self._repo.find_by_id(id)
         if ent is None:
-            self._raise_not_found(Messages.TAUX_COMMISSION_NOT_FOUND)
+            self._raise_not_found(Messages.TYPE_CONGE_NOT_FOUND)
         return ent
 
     async def get_all(
@@ -34,7 +34,7 @@ class TauxCommissionService(BaseRHService):
         actif_only: bool = False,
         skip: int = 0,
         limit: int = 100,
-    ) -> tuple[list[TauxCommission], int]:
+    ) -> tuple[list[TypeConge], int]:
         if await self._entreprise_repo.find_by_id(entreprise_id) is None:
             self._raise_not_found(Messages.ENTREPRISE_NOT_FOUND)
         return await self._repo.find_all(
@@ -44,30 +44,30 @@ class TauxCommissionService(BaseRHService):
             limit=limit,
         )
 
-    async def create(self, data: TauxCommissionCreate) -> TauxCommission:
+    async def create(self, data: TypeCongeCreate) -> TypeConge:
         if await self._entreprise_repo.find_by_id(data.entreprise_id) is None:
             self._raise_not_found(Messages.ENTREPRISE_NOT_FOUND)
         code = (data.code or "").strip()
         if not code:
-            self._raise_bad_request(Messages.TAUX_COMMISSION_CODE_VIDE)
+            self._raise_bad_request(Messages.TYPE_CONGE_CODE_VIDE)
         if await self._repo.exists_by_entreprise_and_code(data.entreprise_id, code):
-            self._raise_conflict(Messages.TAUX_COMMISSION_CODE_EXISTS.format(code=code))
-        ent = TauxCommission(
+            self._raise_conflict(Messages.TYPE_CONGE_CODE_EXISTS.format(code=code))
+        ent = TypeConge(
             entreprise_id=data.entreprise_id,
             code=code,
             libelle=data.libelle.strip(),
-            taux_pct=data.taux_pct,
+            paye=data.paye,
             actif=data.actif,
         )
         return await self._repo.add(ent)
 
-    async def update(self, id: int, data: TauxCommissionUpdate) -> TauxCommission:
+    async def update(self, id: int, data: TypeCongeUpdate) -> TypeConge:
         ent = await self.get_or_404(id)
         update_data = data.model_dump(exclude_unset=True)
         if "code" in update_data and update_data["code"] is not None:
             update_data["code"] = update_data["code"].strip()
             if await self._repo.exists_by_entreprise_and_code(ent.entreprise_id, update_data["code"], exclude_id=id):
-                self._raise_conflict(Messages.TAUX_COMMISSION_CODE_EXISTS.format(code=update_data["code"]))
+                self._raise_conflict(Messages.TYPE_CONGE_CODE_EXISTS.format(code=update_data["code"]))
         for key, value in update_data.items():
             setattr(ent, key, value)
         return await self._repo.update(ent)
