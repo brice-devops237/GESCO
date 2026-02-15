@@ -20,6 +20,14 @@ from app.modules.parametrage.router import router as parametrage_router
 from app.modules.partenaires.router import router as partenaires_router
 from app.modules.commercial.router import router as commercial_router
 from app.modules.achats.router import router as achats_router
+from app.modules.stock.router import router as stock_router
+from app.modules.tresorerie.router import router as tresorerie_router
+from app.modules.comptabilite.router import router as comptabilite_router
+from app.modules.rh.router import router as rh_router
+from app.modules.systeme.router import router as systeme_router
+from app.modules.paie.router import router as paie_router
+from app.modules.rapports.router import router as rapports_router
+from app.modules.immobilisations.router import router as immobilisations_router
 
 
 def _error_response(status_code: int, detail: Any, code: str | None = None) -> dict:
@@ -102,6 +110,14 @@ def create_app() -> FastAPI:
     app.include_router(partenaires_router, prefix=prefix)
     app.include_router(commercial_router, prefix=prefix)
     app.include_router(achats_router, prefix=prefix)
+    app.include_router(stock_router, prefix=prefix)
+    app.include_router(tresorerie_router, prefix=prefix)
+    app.include_router(comptabilite_router, prefix=prefix)
+    app.include_router(rh_router, prefix=prefix)
+    app.include_router(systeme_router, prefix=prefix)
+    app.include_router(paie_router, prefix=prefix)
+    app.include_router(rapports_router, prefix=prefix)
+    app.include_router(immobilisations_router, prefix=prefix)
 
     return app
 
