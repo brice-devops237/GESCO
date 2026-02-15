@@ -1,6 +1,7 @@
 # app/modules/paie/repositories/periode_paie_repository.py
 from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
+
 from app.modules.paie.models import PeriodePaie
 
 

@@ -1,14 +1,17 @@
 # app/modules/commercial/services/devis.py
 from sqlalchemy.ext.asyncio import AsyncSession
+
 from app.modules.commercial.models import Devis
 from app.modules.commercial.repositories import DevisRepository, EtatDocumentRepository
 from app.modules.commercial.schemas import DevisCreate, DevisUpdate
 from app.modules.commercial.services.base import BaseCommercialService
 from app.modules.commercial.services.messages import Messages
-from app.modules.parametrage.repositories import EntrepriseRepository
-from app.modules.parametrage.repositories import PointVenteRepository
+from app.modules.parametrage.repositories import (
+    DeviseRepository,
+    EntrepriseRepository,
+    PointVenteRepository,
+)
 from app.modules.partenaires.repositories import TiersRepository
-from app.modules.parametrage.repositories import DeviseRepository
 
 
 class DevisService(BaseCommercialService):

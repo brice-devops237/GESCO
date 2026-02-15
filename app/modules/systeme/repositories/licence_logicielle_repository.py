@@ -1,7 +1,9 @@
 # app/modules/systeme/repositories/licence_logicielle_repository.py
 from datetime import date
+
 from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
+
 from app.modules.systeme.models import LicenceLogicielle
 
 

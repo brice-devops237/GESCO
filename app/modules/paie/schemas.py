@@ -1,7 +1,6 @@
 # app/modules/paie/schemas.py
 from datetime import date, datetime
 from decimal import Decimal
-from typing import Optional
 
 from pydantic import BaseModel, ConfigDict, Field
 
@@ -17,9 +16,9 @@ class PeriodePaieCreate(BaseModel):
 
 
 class PeriodePaieUpdate(BaseModel):
-    date_debut: Optional[date] = None
-    date_fin: Optional[date] = None
-    cloturee: Optional[bool] = None
+    date_debut: date | None = None
+    date_fin: date | None = None
+    cloturee: bool | None = None
 
 
 class PeriodePaieResponse(BaseModel):
@@ -45,10 +44,10 @@ class TypeElementPaieCreate(BaseModel):
 
 
 class TypeElementPaieUpdate(BaseModel):
-    libelle: Optional[str] = Field(None, max_length=100)
-    type: Optional[str] = Field(None, pattern="^(gain|retenue)$")
-    ordre_affichage: Optional[int] = None
-    actif: Optional[bool] = None
+    libelle: str | None = Field(None, max_length=100)
+    type: str | None = Field(None, pattern="^(gain|retenue)$")
+    ordre_affichage: int | None = None
+    actif: bool | None = None
 
 
 class TypeElementPaieResponse(BaseModel):
@@ -65,7 +64,7 @@ class TypeElementPaieResponse(BaseModel):
 
 # --- Ligne de bulletin ---
 class LigneBulletinPaieCreate(BaseModel):
-    type_element_paie_id: Optional[int] = None
+    type_element_paie_id: int | None = None
     libelle: str = Field(..., max_length=120)
     type: str = Field(..., pattern="^(gain|retenue)$")
     montant: Decimal = Field(..., ge=0)
@@ -76,7 +75,7 @@ class LigneBulletinPaieResponse(BaseModel):
     model_config = ConfigDict(from_attributes=True)
     id: int
     bulletin_paie_id: int
-    type_element_paie_id: Optional[int] = None
+    type_element_paie_id: int | None = None
     libelle: str
     type: str
     montant: Decimal
@@ -98,12 +97,12 @@ class BulletinPaieCreate(BaseModel):
 
 
 class BulletinPaieUpdate(BaseModel):
-    salaire_brut: Optional[Decimal] = Field(None, ge=0)
-    total_gains: Optional[Decimal] = Field(None, ge=0)
-    total_retenues: Optional[Decimal] = Field(None, ge=0)
-    net_a_payer: Optional[Decimal] = Field(None, ge=0)
-    statut: Optional[str] = Field(None, pattern="^(brouillon|valide|paye)$")
-    date_paiement: Optional[date] = None
+    salaire_brut: Decimal | None = Field(None, ge=0)
+    total_gains: Decimal | None = Field(None, ge=0)
+    total_retenues: Decimal | None = Field(None, ge=0)
+    net_a_payer: Decimal | None = Field(None, ge=0)
+    statut: str | None = Field(None, pattern="^(brouillon|valide|paye)$")
+    date_paiement: date | None = None
 
 
 class BulletinPaieResponse(BaseModel):
@@ -117,7 +116,7 @@ class BulletinPaieResponse(BaseModel):
     total_retenues: Decimal
     net_a_payer: Decimal
     statut: str
-    date_paiement: Optional[date] = None
+    date_paiement: date | None = None
     created_at: datetime
 
 

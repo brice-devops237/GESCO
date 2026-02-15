@@ -57,7 +57,7 @@ class RapportsService(BaseRapportsService):
         date_fin: date | None = None,
     ) -> SyntheseDashboard:
         """Synthèse tableau de bord : CA, nb factures, nb commandes, nb employés actifs."""
-        from app.modules.commercial.services import FactureService, CommandeService
+        from app.modules.commercial.services import CommandeService, FactureService
         from app.modules.rh.services import EmployeService
 
         if await self._entreprise_repo.find_by_id(entreprise_id) is None:

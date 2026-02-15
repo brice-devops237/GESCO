@@ -8,7 +8,6 @@ from fastapi import APIRouter, Query
 
 from app.core.dependencies import DbSession
 from app.modules.catalogue import schemas
-from app.modules.parametrage.dependencies import CurrentUser
 from app.modules.catalogue.services import (
     CanalVenteService,
     ConditionnementService,
@@ -20,6 +19,7 @@ from app.modules.catalogue.services import (
     UniteMesureService,
     VarianteProduitService,
 )
+from app.modules.parametrage.dependencies import CurrentUser
 
 router = APIRouter(prefix="/catalogue")
 

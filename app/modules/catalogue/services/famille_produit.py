@@ -3,7 +3,7 @@
 # Use Case Famille de produits (couche Application).
 # -----------------------------------------------------------------------------
 
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -94,5 +94,5 @@ class FamilleProduitService(BaseCatalogueService):
 
     async def delete_soft(self, id: int) -> None:
         ent = await self.get_or_404(id)
-        ent.deleted_at = datetime.now(timezone.utc)
+        ent.deleted_at = datetime.now(UTC)
         await self._repo.update(ent)

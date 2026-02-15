@@ -3,7 +3,10 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.modules.immobilisations.models import CategorieImmobilisation
 from app.modules.immobilisations.repositories import CategorieImmobilisationRepository
-from app.modules.immobilisations.schemas import CategorieImmobilisationCreate, CategorieImmobilisationUpdate
+from app.modules.immobilisations.schemas import (
+    CategorieImmobilisationCreate,
+    CategorieImmobilisationUpdate,
+)
 from app.modules.immobilisations.services.base import BaseImmobilisationsService
 from app.modules.immobilisations.services.messages import Messages
 from app.modules.parametrage.repositories import EntrepriseRepository

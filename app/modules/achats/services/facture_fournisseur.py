@@ -4,14 +4,18 @@
 # -----------------------------------------------------------------------------
 
 from decimal import Decimal
+
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.modules.achats.models import FactureFournisseur, StatutPaiementFournisseur
-from app.modules.achats.repositories import CommandeFournisseurRepository, FactureFournisseurRepository
+from app.modules.achats.repositories import (
+    CommandeFournisseurRepository,
+    FactureFournisseurRepository,
+)
 from app.modules.achats.schemas import FactureFournisseurCreate, FactureFournisseurUpdate
 from app.modules.achats.services.base import BaseAchatsService
 from app.modules.achats.services.messages import Messages
-from app.modules.parametrage.repositories import EntrepriseRepository, DeviseRepository
+from app.modules.parametrage.repositories import DeviseRepository, EntrepriseRepository
 from app.modules.partenaires.repositories import TiersRepository
 
 

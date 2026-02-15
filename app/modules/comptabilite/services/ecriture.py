@@ -3,15 +3,14 @@
 # Service métier : écritures comptables (en-tête + lignes, équilibre débit/crédit).
 # -----------------------------------------------------------------------------
 
-from decimal import Decimal
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.modules.comptabilite.models import EcritureComptable, LigneEcriture
 from app.modules.comptabilite.repositories import (
-    EcritureComptableRepository,
-    LigneEcritureRepository,
     CompteComptableRepository,
+    EcritureComptableRepository,
     JournalComptableRepository,
+    LigneEcritureRepository,
     PeriodeComptableRepository,
 )
 from app.modules.comptabilite.schemas import EcritureComptableCreate
@@ -90,8 +89,8 @@ class EcritureComptableService(BaseComptabiliteService):
             self._raise_bad_request(Messages.ECRITURE_NUMERO_PIECE_VIDE)
         if len(data.lignes) < 2:
             self._raise_bad_request(Messages.ECRITURE_LIGNES_MIN)
-        total_debit = sum(l.debit for l in data.lignes)
-        total_credit = sum(l.credit for l in data.lignes)
+        total_debit = sum(ligne.debit for ligne in data.lignes)
+        total_credit = sum(ligne.credit for ligne in data.lignes)
         if total_debit != total_credit:
             self._raise_bad_request(Messages.ECRITURE_NON_EQUILIBREE)
         if total_debit <= 0:

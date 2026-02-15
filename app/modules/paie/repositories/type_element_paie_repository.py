@@ -1,6 +1,7 @@
 # app/modules/paie/repositories/type_element_paie_repository.py
 from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
+
 from app.modules.paie.models import TypeElementPaie
 
 

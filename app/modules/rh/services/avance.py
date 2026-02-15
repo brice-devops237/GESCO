@@ -4,13 +4,12 @@
 # -----------------------------------------------------------------------------
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.modules.parametrage.repositories import EntrepriseRepository
 from app.modules.rh.models import Avance
-from app.modules.rh.repositories import AvanceRepository
+from app.modules.rh.repositories import AvanceRepository, EmployeRepository
 from app.modules.rh.schemas import AvanceCreate, AvanceUpdate
 from app.modules.rh.services.base import BaseRHService
 from app.modules.rh.services.messages import Messages
-from app.modules.parametrage.repositories import EntrepriseRepository
-from app.modules.rh.repositories import EmployeRepository
 
 
 class AvanceService(BaseRHService):

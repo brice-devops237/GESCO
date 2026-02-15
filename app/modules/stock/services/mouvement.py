@@ -4,12 +4,12 @@
 # -----------------------------------------------------------------------------
 
 from datetime import datetime
-from decimal import Decimal
+
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.modules.achats.repositories import DepotRepository
 from app.modules.catalogue.repositories import ProduitRepository, VarianteProduitRepository
-from app.modules.stock.models import MouvementStock, TypeMouvementStock, ReferenceTypeMouvement
+from app.modules.stock.models import MouvementStock, ReferenceTypeMouvement, TypeMouvementStock
 from app.modules.stock.repositories import MouvementStockRepository, StockRepository
 from app.modules.stock.schemas import MouvementStockCreate
 from app.modules.stock.services.base import BaseStockService

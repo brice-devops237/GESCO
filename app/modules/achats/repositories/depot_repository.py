@@ -1,6 +1,7 @@
 # app/modules/achats/repositories/depot_repository.py
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
+
 from app.modules.achats.models import Depot
 
 

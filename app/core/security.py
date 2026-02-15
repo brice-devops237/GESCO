@@ -5,7 +5,7 @@
 # les imports circulaires. Les infos utilisateur sont passées en paramètre.
 # -----------------------------------------------------------------------------
 
-from datetime import datetime, timedelta, timezone
+from datetime import UTC, datetime, timedelta
 from typing import Any
 
 from jose import JWTError, jwt
@@ -57,11 +57,11 @@ def create_access_token(
     s = get_settings()
     if expires_delta is None:
         expires_delta = timedelta(minutes=s.ACCESS_TOKEN_EXPIRE_MINUTES)
-    expire = datetime.now(timezone.utc) + expires_delta
+    expire = datetime.now(UTC) + expires_delta
     to_encode = {
         "sub": str(subject),
         "exp": expire,
-        "iat": datetime.now(timezone.utc),
+        "iat": datetime.now(UTC),
     }
     if extra_claims:
         to_encode.update(extra_claims)

@@ -6,7 +6,6 @@
 # -----------------------------------------------------------------------------
 
 from functools import lru_cache
-from typing import Optional
 
 from pydantic import Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
@@ -81,14 +80,14 @@ class Settings(BaseSettings):
     MAX_UPLOAD_SIZE: int = Field(default=10_485_760, ge=0, description="Taille max d'un fichier uploadé (octets, 10 Mo)")
 
     # --- Cache & session ---
-    REDIS_URL: Optional[str] = Field(default=None, description="URL Redis (vide = cache mémoire)")
+    REDIS_URL: str | None = Field(default=None, description="URL Redis (vide = cache mémoire)")
     CACHE_SESSION_TTL_MINUTES: int = Field(default=1440, ge=1, description="TTL du cache de travail (minutes)")
     ENABLE_SESSION_RECOVERY: bool = Field(default=True, description="Activer la reprise de session")
 
     # --- Logging ---
     LOG_LEVEL: str = Field(default="INFO", description="Niveau de log (DEBUG|INFO|WARNING|ERROR)")
     LOG_FORMAT: str = Field(default="json", description="Format des logs (json|text)")
-    LOG_FILE: Optional[str] = Field(default=None, description="Fichier de log (vide = console uniquement)")
+    LOG_FILE: str | None = Field(default=None, description="Fichier de log (vide = console uniquement)")
 
     def cors_origins_list(self) -> list[str]:
         """

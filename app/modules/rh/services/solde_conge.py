@@ -4,13 +4,12 @@
 # -----------------------------------------------------------------------------
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.modules.parametrage.repositories import EntrepriseRepository
 from app.modules.rh.models import SoldeConge
-from app.modules.rh.repositories import SoldeCongeRepository
+from app.modules.rh.repositories import EmployeRepository, SoldeCongeRepository, TypeCongeRepository
 from app.modules.rh.schemas import SoldeCongeCreate, SoldeCongeUpdate
 from app.modules.rh.services.base import BaseRHService
 from app.modules.rh.services.messages import Messages
-from app.modules.parametrage.repositories import EntrepriseRepository
-from app.modules.rh.repositories import EmployeRepository, TypeCongeRepository
 
 
 class SoldeCongeService(BaseRHService):

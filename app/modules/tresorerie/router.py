@@ -9,8 +9,8 @@ from app.core.dependencies import DbSession
 from app.modules.parametrage.dependencies import CurrentUser
 from app.modules.tresorerie import schemas
 from app.modules.tresorerie.services import (
-    ModePaiementService,
     CompteTresorerieService,
+    ModePaiementService,
     ReglementService,
 )
 

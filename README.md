@@ -4,8 +4,8 @@
 
 | | |
 |---|---|
-| **Documentation interactive** | [http://localhost:8000/docs](http://localhost:8000/docs) (Swagger, tags par ressource) |
-| **Santé API** | [http://localhost:8000/health](http://localhost:8000/health) |
+| **Documentation interactive** | [http://localhost:9111/docs](http://localhost:9111/docs) (Swagger, tags par ressource) |
+| **Santé API** | [http://localhost:9111/health](http://localhost:9111/health) |
 | **Préfixe API** | `/api/v1` |
 
 ---
@@ -41,22 +41,25 @@ python -m venv .venv
 pip install -r requirements.txt
 ```
 
-Créer un fichier **`.env`** à la racine avec au minimum :  
-`SECRET_KEY=une-cle-secrete-d-au-moins-32-caracteres-pour-jwt`
+Créer un fichier **`.env`** à la racine avec au minimum une clé JWT (32 caractères min.) :  
+`SECRET_KEY=<votre-clé-secrète-min-32-car>`  
+Exemple de génération : `openssl rand -hex 32`
 
 ```bash
-uvicorn app.main:app --reload --host 127.0.0.1 --port 8000
+uvicorn app.main:app --reload --host 127.0.0.1 --port 9111
 ```
 
-→ **API** : [http://127.0.0.1:8000](http://127.0.0.1:8000) · **Docs** : [http://127.0.0.1:8000/docs](http://127.0.0.1:8000/docs) · **Santé** : [http://127.0.0.1:8000/health](http://127.0.0.1:8000/health)
+→ **API** : [http://127.0.0.1:9111](http://127.0.0.1:9111) · **Docs** : [http://127.0.0.1:9111/docs](http://127.0.0.1:9111/docs) · **Santé** : [http://127.0.0.1:9111/health](http://127.0.0.1:9111/health)
 
 La base SQLite est créée automatiquement dans `app/db/gesco.db`. Schéma : `alembic upgrade head`. Données de démo (Cameroun) : `python scripts/seed_data.py`.
 
 **Avec PostgreSQL et Docker** :
 
+Créer un **`.env`** avec au moins `SECRET_KEY=<votre-clé-32-car-min>` (et optionnellement `POSTGRES_USER`, `POSTGRES_PASSWORD`, `POSTGRES_DB`).
+
 ```bash
 docker compose up -d
-# API sur http://localhost:8000 ; définir DATABASE_URL / DATABASE_URL_SYNC / SECRET_KEY dans .env ou docker-compose
+# API sur http://localhost:9111 (port 9111)
 ```
 
 ---
@@ -596,7 +599,7 @@ Par défaut, l’application utilise **SQLite** (`app/db/gesco.db`). Pour utilis
 | `APP_ENV` | development | development / staging / production |
 | `DEBUG` | True | Mode debug |
 | `HOST` | 0.0.0.0 | Adresse d’écoute |
-| `PORT` | 8000 | Port |
+| `PORT` | 9111 | Port (ex. 9111) |
 | `API_V1_PREFIX` | /api/v1 | Préfixe des routes API |
 | `TIMEZONE` | Africa/Douala | Fuseau horaire |
 | `FRONTEND_URL` | http://localhost:3000 | URL frontend (CORS, redirections) |
@@ -633,15 +636,15 @@ Résumé : créer un **`.env`** avec au minimum `SECRET_KEY=...` (32 caractères
 
 ```bash
 pip install -r requirements.txt
-uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
+uvicorn app.main:app --reload --host 0.0.0.0 --port 9111
 ```
 
-Avec **PostgreSQL** : définir `DATABASE_URL` et `DATABASE_URL_SYNC` dans `.env`, ou utiliser **Docker** : `docker compose up -d` (API + PostgreSQL sur le port 8000).
+Avec **PostgreSQL** : définir `DATABASE_URL` et `DATABASE_URL_SYNC` dans `.env`, ou utiliser **Docker** : `docker compose up -d` (API sur le port 9111).
 
-- **API** : `http://localhost:8000`  
-- **Swagger (OpenAPI)** : `http://localhost:8000/docs` (tags par ressource, auth Bearer)  
-- **ReDoc** : `http://localhost:8000/redoc`  
-- **Santé** : `http://localhost:8000/health`  
+- **API** : `http://localhost:9111`  
+- **Swagger (OpenAPI)** : `http://localhost:9111/docs` (tags par ressource, auth Bearer)  
+- **ReDoc** : `http://localhost:9111/redoc`  
+- **Santé** : `http://localhost:9111/health`  
 
 ---
 

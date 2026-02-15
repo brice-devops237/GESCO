@@ -9,8 +9,8 @@ from collections.abc import AsyncGenerator
 from typing import Annotated
 
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
-from sqlalchemy.pool import NullPool
 from sqlalchemy.orm import DeclarativeBase, declared_attr
+from sqlalchemy.pool import NullPool
 
 # Import différé de get_settings pour éviter chargement circulaire au démarrage
 # (config peut être chargé avant que l'app soit complète)

@@ -8,12 +8,10 @@
 
 from datetime import date, datetime
 from decimal import Decimal
-from typing import Optional
 
 from pydantic import BaseModel, ConfigDict, EmailStr, Field
 
 from app.modules.parametrage.models import ModeGestion, RegimeFiscal, TypePointDeVente
-
 
 # --- Devise ------------------------------------------------------------------
 
@@ -21,17 +19,17 @@ class DeviseCreate(BaseModel):
     """Schéma de création d'une devise (ISO 4217 : XAF, EUR, USD)."""
     code: str = Field(..., min_length=1, max_length=3, description="Code ISO 4217 (ex. XAF, EUR, USD)")
     libelle: str = Field(..., min_length=1, max_length=50)
-    symbole: Optional[str] = Field(None, max_length=10)
+    symbole: str | None = Field(None, max_length=10)
     decimales: int = Field(default=0, ge=0, le=6)
     actif: bool = True
 
 
 class DeviseUpdate(BaseModel):
     """Schéma de mise à jour partielle d'une devise."""
-    libelle: Optional[str] = Field(None, min_length=1, max_length=50)
-    symbole: Optional[str] = Field(None, max_length=10)
-    decimales: Optional[int] = Field(None, ge=0, le=6)
-    actif: Optional[bool] = None
+    libelle: str | None = Field(None, min_length=1, max_length=50)
+    symbole: str | None = Field(None, max_length=10)
+    decimales: int | None = Field(None, ge=0, le=6)
+    actif: bool | None = None
 
 
 class DeviseResponse(BaseModel):
@@ -40,7 +38,7 @@ class DeviseResponse(BaseModel):
     id: int
     code: str
     libelle: str
-    symbole: Optional[str] = None
+    symbole: str | None = None
     decimales: int
     actif: bool
 
@@ -72,39 +70,39 @@ class EntrepriseCreate(BaseModel):
     """Schéma de création d'une entreprise (conformité CGI/DGI Cameroun, ISO pays/devise)."""
     code: str = Field(..., min_length=1, max_length=20)
     raison_sociale: str = Field(..., min_length=1, max_length=255)
-    sigle: Optional[str] = Field(None, max_length=50)
-    niu: Optional[str] = Field(None, max_length=20, description="NIU DGI – obligatoire pour opérations économiques au Cameroun")
+    sigle: str | None = Field(None, max_length=50)
+    niu: str | None = Field(None, max_length=20, description="NIU DGI – obligatoire pour opérations économiques au Cameroun")
     regime_fiscal: RegimeFiscal = Field(..., description="Régime fiscal (CGI Cameroun)")
     mode_gestion: ModeGestion
-    adresse: Optional[str] = None
-    ville: Optional[str] = Field(None, max_length=100)
-    region: Optional[str] = Field(None, max_length=100)
+    adresse: str | None = None
+    ville: str | None = Field(None, max_length=100)
+    region: str | None = Field(None, max_length=100)
     pays: str = Field(default="CMR", max_length=3, description="Code pays ISO 3166-1 alpha-3 (ex. CMR)")
-    telephone: Optional[str] = Field(None, max_length=30)
-    email: Optional[EmailStr] = None
-    site_web: Optional[str] = Field(None, max_length=255)
+    telephone: str | None = Field(None, max_length=30)
+    email: EmailStr | None = None
+    site_web: str | None = Field(None, max_length=255)
     devise_principale: str = Field(default="XAF", max_length=3, description="Code devise ISO 4217 (XAF = CEMAC)")
-    logo_url: Optional[str] = Field(None, max_length=500)
+    logo_url: str | None = Field(None, max_length=500)
     actif: bool = True
 
 
 class EntrepriseUpdate(BaseModel):
     """Schéma de mise à jour partielle d'une entreprise."""
-    raison_sociale: Optional[str] = Field(None, min_length=1, max_length=255)
-    sigle: Optional[str] = Field(None, max_length=50)
-    niu: Optional[str] = Field(None, max_length=20)
-    regime_fiscal: Optional[RegimeFiscal] = None
-    mode_gestion: Optional[ModeGestion] = None
-    adresse: Optional[str] = None
-    ville: Optional[str] = Field(None, max_length=100)
-    region: Optional[str] = Field(None, max_length=100)
-    pays: Optional[str] = Field(None, max_length=3)
-    telephone: Optional[str] = Field(None, max_length=30)
-    email: Optional[EmailStr] = None
-    site_web: Optional[str] = Field(None, max_length=255)
-    devise_principale: Optional[str] = Field(None, max_length=3)
-    logo_url: Optional[str] = Field(None, max_length=500)
-    actif: Optional[bool] = None
+    raison_sociale: str | None = Field(None, min_length=1, max_length=255)
+    sigle: str | None = Field(None, max_length=50)
+    niu: str | None = Field(None, max_length=20)
+    regime_fiscal: RegimeFiscal | None = None
+    mode_gestion: ModeGestion | None = None
+    adresse: str | None = None
+    ville: str | None = Field(None, max_length=100)
+    region: str | None = Field(None, max_length=100)
+    pays: str | None = Field(None, max_length=3)
+    telephone: str | None = Field(None, max_length=30)
+    email: EmailStr | None = None
+    site_web: str | None = Field(None, max_length=255)
+    devise_principale: str | None = Field(None, max_length=3)
+    logo_url: str | None = Field(None, max_length=500)
+    actif: bool | None = None
 
 
 class EntrepriseResponse(BaseModel):
@@ -113,11 +111,11 @@ class EntrepriseResponse(BaseModel):
     id: int
     code: str
     raison_sociale: str
-    sigle: Optional[str] = None
-    niu: Optional[str] = None
+    sigle: str | None = None
+    niu: str | None = None
     regime_fiscal: str
     mode_gestion: str
-    ville: Optional[str] = None
+    ville: str | None = None
     pays: str
     devise_principale: str
     actif: bool
@@ -133,23 +131,23 @@ class PointDeVenteCreate(BaseModel):
     code: str = Field(..., min_length=1, max_length=20)
     libelle: str = Field(..., min_length=1, max_length=100)
     type: TypePointDeVente
-    adresse: Optional[str] = None
-    ville: Optional[str] = Field(None, max_length=100)
-    telephone: Optional[str] = Field(None, max_length=30)
+    adresse: str | None = None
+    ville: str | None = Field(None, max_length=100)
+    telephone: str | None = Field(None, max_length=30)
     est_depot: bool = False
     actif: bool = True
 
 
 class PointDeVenteUpdate(BaseModel):
     """Schéma de mise à jour partielle d'un point de vente."""
-    code: Optional[str] = Field(None, min_length=1, max_length=20)
-    libelle: Optional[str] = Field(None, min_length=1, max_length=100)
-    type: Optional[TypePointDeVente] = None
-    adresse: Optional[str] = None
-    ville: Optional[str] = Field(None, max_length=100)
-    telephone: Optional[str] = Field(None, max_length=30)
-    est_depot: Optional[bool] = None
-    actif: Optional[bool] = None
+    code: str | None = Field(None, min_length=1, max_length=20)
+    libelle: str | None = Field(None, min_length=1, max_length=100)
+    type: TypePointDeVente | None = None
+    adresse: str | None = None
+    ville: str | None = Field(None, max_length=100)
+    telephone: str | None = Field(None, max_length=30)
+    est_depot: bool | None = None
+    actif: bool | None = None
 
 
 class PointDeVenteResponse(BaseModel):
@@ -160,7 +158,7 @@ class PointDeVenteResponse(BaseModel):
     code: str
     libelle: str
     type: str
-    ville: Optional[str] = None
+    ville: str | None = None
     est_depot: bool
     actif: bool
     created_at: datetime
@@ -171,22 +169,22 @@ class PointDeVenteResponse(BaseModel):
 
 class RoleCreate(BaseModel):
     """Schéma de création d'un rôle."""
-    entreprise_id: Optional[int] = None  # NULL = rôle système
+    entreprise_id: int | None = None  # NULL = rôle système
     code: str = Field(..., min_length=1, max_length=50)
     libelle: str = Field(..., min_length=1, max_length=100)
 
 
 class RoleUpdate(BaseModel):
     """Schéma de mise à jour partielle d'un rôle."""
-    code: Optional[str] = Field(None, min_length=1, max_length=50)
-    libelle: Optional[str] = Field(None, min_length=1, max_length=100)
+    code: str | None = Field(None, min_length=1, max_length=50)
+    libelle: str | None = Field(None, min_length=1, max_length=100)
 
 
 class RoleResponse(BaseModel):
     """Schéma de réponse pour un rôle."""
     model_config = ConfigDict(from_attributes=True)
     id: int
-    entreprise_id: Optional[int] = None
+    entreprise_id: int | None = None
     code: str
     libelle: str
     created_at: datetime
@@ -232,27 +230,27 @@ class PermissionRoleResponse(BaseModel):
 class UtilisateurCreate(BaseModel):
     """Schéma de création d'un utilisateur (mot de passe en clair)."""
     entreprise_id: int
-    point_de_vente_id: Optional[int] = None
+    point_de_vente_id: int | None = None
     role_id: int
     login: str = Field(..., min_length=1, max_length=80)
     mot_de_passe: str = Field(..., min_length=8, max_length=128)
-    email: Optional[EmailStr] = None
+    email: EmailStr | None = None
     nom: str = Field(..., min_length=1, max_length=100)
-    prenom: Optional[str] = Field(None, max_length=100)
-    telephone: Optional[str] = Field(None, max_length=30)
+    prenom: str | None = Field(None, max_length=100)
+    telephone: str | None = Field(None, max_length=30)
     actif: bool = True
 
 
 class UtilisateurUpdate(BaseModel):
     """Schéma de mise à jour partielle d'un utilisateur."""
-    point_de_vente_id: Optional[int] = None
-    role_id: Optional[int] = None
-    email: Optional[EmailStr] = None
-    nom: Optional[str] = Field(None, min_length=1, max_length=100)
-    prenom: Optional[str] = Field(None, max_length=100)
-    telephone: Optional[str] = Field(None, max_length=30)
-    actif: Optional[bool] = None
-    mot_de_passe: Optional[str] = Field(None, min_length=8, max_length=128)
+    point_de_vente_id: int | None = None
+    role_id: int | None = None
+    email: EmailStr | None = None
+    nom: str | None = Field(None, min_length=1, max_length=100)
+    prenom: str | None = Field(None, max_length=100)
+    telephone: str | None = Field(None, max_length=30)
+    actif: bool | None = None
+    mot_de_passe: str | None = Field(None, min_length=8, max_length=128)
 
 
 class UtilisateurResponse(BaseModel):
@@ -260,15 +258,15 @@ class UtilisateurResponse(BaseModel):
     model_config = ConfigDict(from_attributes=True)
     id: int
     entreprise_id: int
-    point_de_vente_id: Optional[int] = None
+    point_de_vente_id: int | None = None
     role_id: int
     login: str
-    email: Optional[str] = None
+    email: str | None = None
     nom: str
-    prenom: Optional[str] = None
-    telephone: Optional[str] = None
+    prenom: str | None = None
+    telephone: str | None = None
     actif: bool
-    derniere_connexion_at: Optional[datetime] = None
+    derniere_connexion_at: datetime | None = None
     created_at: datetime
     updated_at: datetime
 
@@ -281,11 +279,11 @@ class SessionResponse(BaseModel):
     id: int
     utilisateur_id: int
     token: str
-    identifiant_appareil: Optional[str] = None
+    identifiant_appareil: str | None = None
     expire_at: datetime
-    last_activity_at: Optional[datetime] = None
+    last_activity_at: datetime | None = None
     created_at: datetime
-    closed_at: Optional[datetime] = None
+    closed_at: datetime | None = None
 
 
 # --- Affectation utilisateur / PDV -------------------------------------------
@@ -299,7 +297,7 @@ class AffectationUtilisateurPdvCreate(BaseModel):
 
 class AffectationUtilisateurPdvUpdate(BaseModel):
     """Schéma de mise à jour (principalement est_principal)."""
-    est_principal: Optional[bool] = None
+    est_principal: bool | None = None
 
 
 class AffectationUtilisateurPdvResponse(BaseModel):

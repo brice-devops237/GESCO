@@ -5,7 +5,7 @@
 
 import re
 from datetime import date, datetime
-from typing import Any, Optional
+from typing import Any
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 
@@ -15,13 +15,13 @@ class ParametreSystemeCreate(BaseModel):
     entreprise_id: int = Field(...)
     categorie: str = Field(..., max_length=50)
     cle: str = Field(..., max_length=80)
-    valeur: Optional[str] = Field(None)
-    description: Optional[str] = Field(None, max_length=255)
+    valeur: str | None = Field(None)
+    description: str | None = Field(None, max_length=255)
 
 
 class ParametreSystemeUpdate(BaseModel):
-    valeur: Optional[str] = None
-    description: Optional[str] = Field(None, max_length=255)
+    valeur: str | None = None
+    description: str | None = Field(None, max_length=255)
 
 
 class ParametreSystemeResponse(BaseModel):
@@ -30,37 +30,37 @@ class ParametreSystemeResponse(BaseModel):
     entreprise_id: int
     categorie: str
     cle: str
-    valeur: Optional[str] = None
-    description: Optional[str] = None
+    valeur: str | None = None
+    description: str | None = None
     created_at: datetime
     updated_at: datetime
 
 
 # --- Journal d'audit ---
 class JournalAuditCreate(BaseModel):
-    entreprise_id: Optional[int] = None
-    utilisateur_id: Optional[int] = None
+    entreprise_id: int | None = None
+    utilisateur_id: int | None = None
     action: str = Field(..., max_length=30)
-    module: Optional[str] = Field(None, max_length=50)
-    entite_type: Optional[str] = Field(None, max_length=80)
-    entite_id: Optional[int] = None
-    details: Optional[dict[str, Any]] = None
-    ip_address: Optional[str] = Field(None, max_length=45)
-    user_agent: Optional[str] = Field(None, max_length=500)
+    module: str | None = Field(None, max_length=50)
+    entite_type: str | None = Field(None, max_length=80)
+    entite_id: int | None = None
+    details: dict[str, Any] | None = None
+    ip_address: str | None = Field(None, max_length=45)
+    user_agent: str | None = Field(None, max_length=500)
 
 
 class JournalAuditResponse(BaseModel):
     model_config = ConfigDict(from_attributes=True)
     id: int
-    entreprise_id: Optional[int] = None
-    utilisateur_id: Optional[int] = None
+    entreprise_id: int | None = None
+    utilisateur_id: int | None = None
     action: str
-    module: Optional[str] = None
-    entite_type: Optional[str] = None
-    entite_id: Optional[int] = None
-    details: Optional[dict[str, Any]] = None
-    ip_address: Optional[str] = None
-    user_agent: Optional[str] = None
+    module: str | None = None
+    entite_type: str | None = None
+    entite_id: int | None = None
+    details: dict[str, Any] | None = None
+    ip_address: str | None = None
+    user_agent: str | None = None
     created_at: datetime
 
 
@@ -68,13 +68,13 @@ class JournalAuditResponse(BaseModel):
 class NotificationCreate(BaseModel):
     utilisateur_id: int = Field(...)
     titre: str = Field(..., max_length=150)
-    message: Optional[str] = Field(None)
-    entite_type: Optional[str] = Field(None, max_length=80)
-    entite_id: Optional[int] = None
+    message: str | None = Field(None)
+    entite_type: str | None = Field(None, max_length=80)
+    entite_id: int | None = None
 
 
 class NotificationUpdate(BaseModel):
-    lue: Optional[bool] = None
+    lue: bool | None = None
 
 
 class NotificationResponse(BaseModel):
@@ -82,10 +82,10 @@ class NotificationResponse(BaseModel):
     id: int
     utilisateur_id: int
     titre: str
-    message: Optional[str] = None
+    message: str | None = None
     lue: bool
-    entite_type: Optional[str] = None
-    entite_id: Optional[int] = None
+    entite_type: str | None = None
+    entite_id: int | None = None
     created_at: datetime
 
 
@@ -132,9 +132,9 @@ class LicenceLogicielleCreate(BaseModel):
 
 
 class LicenceLogicielleUpdate(BaseModel):
-    type_licence: Optional[str] = Field(None, max_length=30)
-    date_fin: Optional[date] = None
-    actif: Optional[bool] = None
+    type_licence: str | None = Field(None, max_length=30)
+    date_fin: date | None = None
+    actif: bool | None = None
 
 
 class LicenceLogicielleResponse(BaseModel):
@@ -147,7 +147,7 @@ class LicenceLogicielleResponse(BaseModel):
     date_fin: date
     actif: bool
     nombre_prolongations: int = 0
-    date_activation: Optional[datetime] = None
+    date_activation: datetime | None = None
     created_at: datetime
     updated_at: datetime
 
@@ -156,7 +156,7 @@ class LicenceProlongationsInfo(BaseModel):
     """Info sur les prolongations (trial/standard : max 3, premium : illimité)."""
     type_licence: str
     nombre_prolongations: int
-    prolongations_restantes: Optional[int] = None  # None = illimité (premium)
+    prolongations_restantes: int | None = None  # None = illimité (premium)
     duree_ajoutee_mois: int  # durée ajoutée à chaque prolongation
 
 
@@ -164,4 +164,4 @@ class LicenceValideResponse(BaseModel):
     """Réponse pour la vérification de validité d'une licence."""
     valide: bool
     message: str
-    date_fin: Optional[date] = None
+    date_fin: date | None = None

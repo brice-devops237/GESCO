@@ -3,8 +3,10 @@
 # Repository Reglement (couche Infrastructure).
 # -----------------------------------------------------------------------------
 from datetime import date
+
 from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
+
 from app.modules.tresorerie.models import Reglement
 
 

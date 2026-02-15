@@ -4,13 +4,12 @@
 # -----------------------------------------------------------------------------
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.modules.parametrage.repositories import EntrepriseRepository
 from app.modules.rh.models import Commission
-from app.modules.rh.repositories import CommissionRepository
+from app.modules.rh.repositories import CommissionRepository, EmployeRepository
 from app.modules.rh.schemas import CommissionCreate, CommissionUpdate
 from app.modules.rh.services.base import BaseRHService
 from app.modules.rh.services.messages import Messages
-from app.modules.parametrage.repositories import EntrepriseRepository
-from app.modules.rh.repositories import EmployeRepository
 
 
 class CommissionService(BaseRHService):

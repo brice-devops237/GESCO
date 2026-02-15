@@ -1,6 +1,7 @@
 # app/modules/achats/repositories/facture_fournisseur_repository.py
 from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
+
 from app.modules.achats.models import FactureFournisseur
 
 

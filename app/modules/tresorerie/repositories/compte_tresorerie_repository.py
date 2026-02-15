@@ -4,6 +4,7 @@
 # -----------------------------------------------------------------------------
 from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
+
 from app.modules.tresorerie.models import CompteTresorerie
 
 

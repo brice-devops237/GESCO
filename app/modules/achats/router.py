@@ -5,14 +5,15 @@
 # -----------------------------------------------------------------------------
 
 from fastapi import APIRouter, Query
+
 from app.core.dependencies import DbSession
-from app.modules.parametrage.dependencies import CurrentUser
 from app.modules.achats import schemas
 from app.modules.achats.services import (
     CommandeFournisseurService,
-    ReceptionService,
     FactureFournisseurService,
+    ReceptionService,
 )
+from app.modules.parametrage.dependencies import CurrentUser
 
 router = APIRouter(prefix="/achats")
 

@@ -66,9 +66,7 @@ class PeriodePaieService(BasePaieService):
         if "date_fin" in update_data and "date_debut" in update_data:
             if update_data["date_fin"] <= update_data["date_debut"]:
                 self._raise_bad_request(Messages.PERIODE_DATES)
-        elif "date_fin" in update_data and update_data["date_fin"] <= ent.date_debut:
-            self._raise_bad_request(Messages.PERIODE_DATES)
-        elif "date_debut" in update_data and ent.date_fin <= update_data["date_debut"]:
+        elif "date_fin" in update_data and update_data["date_fin"] <= ent.date_debut or "date_debut" in update_data and ent.date_fin <= update_data["date_debut"]:
             self._raise_bad_request(Messages.PERIODE_DATES)
         for key, value in update_data.items():
             setattr(ent, key, value)

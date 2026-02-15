@@ -1,13 +1,22 @@
 # app/modules/commercial/services/facture.py
 from decimal import Decimal
+
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.modules.commercial.models import Facture, TypeFacture
-from app.modules.commercial.repositories import CommandeRepository, EtatDocumentRepository, FactureRepository
+from app.modules.commercial.repositories import (
+    CommandeRepository,
+    EtatDocumentRepository,
+    FactureRepository,
+)
 from app.modules.commercial.schemas import FactureCreate, FactureUpdate
 from app.modules.commercial.services.base import BaseCommercialService
 from app.modules.commercial.services.messages import Messages
-from app.modules.parametrage.repositories import EntrepriseRepository, PointVenteRepository, DeviseRepository
+from app.modules.parametrage.repositories import (
+    DeviseRepository,
+    EntrepriseRepository,
+    PointVenteRepository,
+)
 from app.modules.partenaires.repositories import TiersRepository
 
 

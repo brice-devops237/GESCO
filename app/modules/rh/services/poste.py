@@ -4,12 +4,12 @@
 # -----------------------------------------------------------------------------
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.modules.parametrage.repositories import EntrepriseRepository
 from app.modules.rh.models import Poste
 from app.modules.rh.repositories import PosteRepository
 from app.modules.rh.schemas import PosteCreate, PosteUpdate
 from app.modules.rh.services.base import BaseRHService
 from app.modules.rh.services.messages import Messages
-from app.modules.parametrage.repositories import EntrepriseRepository
 
 
 class PosteService(BaseRHService):

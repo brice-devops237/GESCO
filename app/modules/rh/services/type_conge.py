@@ -4,12 +4,12 @@
 # -----------------------------------------------------------------------------
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.modules.parametrage.repositories import EntrepriseRepository
 from app.modules.rh.models import TypeConge
 from app.modules.rh.repositories import TypeCongeRepository
 from app.modules.rh.schemas import TypeCongeCreate, TypeCongeUpdate
 from app.modules.rh.services.base import BaseRHService
 from app.modules.rh.services.messages import Messages
-from app.modules.parametrage.repositories import EntrepriseRepository
 
 
 class TypeCongeService(BaseRHService):

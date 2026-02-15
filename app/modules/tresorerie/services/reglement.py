@@ -5,16 +5,19 @@
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.modules.achats.repositories import FactureFournisseurRepository
+from app.modules.commercial.repositories import FactureRepository
+from app.modules.parametrage.repositories import EntrepriseRepository
+from app.modules.partenaires.repositories import TiersRepository
 from app.modules.tresorerie.models import Reglement, TypeReglement
-from app.modules.tresorerie.repositories import ReglementRepository
+from app.modules.tresorerie.repositories import (
+    CompteTresorerieRepository,
+    ModePaiementRepository,
+    ReglementRepository,
+)
 from app.modules.tresorerie.schemas import ReglementCreate
 from app.modules.tresorerie.services.base import BaseTresorerieService
 from app.modules.tresorerie.services.messages import Messages
-from app.modules.parametrage.repositories import EntrepriseRepository
-from app.modules.partenaires.repositories import TiersRepository
-from app.modules.tresorerie.repositories import ModePaiementRepository, CompteTresorerieRepository
-from app.modules.commercial.repositories import FactureRepository
-from app.modules.achats.repositories import FactureFournisseurRepository
 
 
 class ReglementService(BaseTresorerieService):

@@ -5,12 +5,12 @@
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.modules.parametrage.repositories import DeviseRepository, EntrepriseRepository
 from app.modules.tresorerie.models import CompteTresorerie, TypeCompteTresorerie
 from app.modules.tresorerie.repositories import CompteTresorerieRepository
 from app.modules.tresorerie.schemas import CompteTresorerieCreate, CompteTresorerieUpdate
 from app.modules.tresorerie.services.base import BaseTresorerieService
 from app.modules.tresorerie.services.messages import Messages
-from app.modules.parametrage.repositories import EntrepriseRepository, DeviseRepository
 
 
 class CompteTresorerieService(BaseTresorerieService):

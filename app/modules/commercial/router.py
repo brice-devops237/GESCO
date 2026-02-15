@@ -5,8 +5,8 @@
 # -----------------------------------------------------------------------------
 
 from fastapi import APIRouter, Query
+
 from app.core.dependencies import DbSession
-from app.modules.parametrage.dependencies import CurrentUser
 from app.modules.commercial import schemas
 from app.modules.commercial.services import (
     BonLivraisonService,
@@ -15,6 +15,7 @@ from app.modules.commercial.services import (
     EtatDocumentService,
     FactureService,
 )
+from app.modules.parametrage.dependencies import CurrentUser
 
 router = APIRouter(prefix="/commercial")
 

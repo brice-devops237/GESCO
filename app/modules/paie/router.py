@@ -6,9 +6,13 @@
 from fastapi import APIRouter, Query
 
 from app.core.dependencies import DbSession
-from app.modules.parametrage.dependencies import CurrentUser
 from app.modules.paie import schemas
-from app.modules.paie.services import PeriodePaieService, TypeElementPaieService, BulletinPaieService
+from app.modules.paie.services import (
+    BulletinPaieService,
+    PeriodePaieService,
+    TypeElementPaieService,
+)
+from app.modules.parametrage.dependencies import CurrentUser
 
 router = APIRouter(prefix="/paie")
 
@@ -116,12 +120,12 @@ async def get_bulletin_paie(db: DbSession, current_user: CurrentUser, id: int):
 async def get_bulletin_paie_detail(db: DbSession, current_user: CurrentUser, id: int):
     ent = await BulletinPaieService(db).get_by_id_with_lignes(id)
     if ent is None:
-        from app.modules.paie.services.messages import Messages
         from app.core.exceptions import NotFoundError
+        from app.modules.paie.services.messages import Messages
         raise NotFoundError(detail=Messages.BULLETIN_PAIE_NOT_FOUND)
     return schemas.BulletinPaieDetailResponse(
         **schemas.BulletinPaieResponse.model_validate(ent).model_dump(),
-        lignes=[schemas.LigneBulletinPaieResponse.model_validate(l) for l in ent.lignes],
+        lignes=[schemas.LigneBulletinPaieResponse.model_validate(ligne) for ligne in ent.lignes],
     )
 
 

@@ -9,7 +9,9 @@ from fastapi import APIRouter, Query
 from app.core.dependencies import DbSession
 from app.modules.parametrage import schemas
 from app.modules.parametrage.dependencies import CurrentUser
-from app.modules.parametrage.services.affectation_utilisateur_pdv import AffectationUtilisateurPdvService
+from app.modules.parametrage.services.affectation_utilisateur_pdv import (
+    AffectationUtilisateurPdvService,
+)
 from app.modules.parametrage.services.devise import DeviseService
 from app.modules.parametrage.services.entreprise import EntrepriseService
 from app.modules.parametrage.services.permission import PermissionService

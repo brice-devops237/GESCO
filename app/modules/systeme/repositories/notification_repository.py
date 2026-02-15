@@ -1,6 +1,7 @@
 # app/modules/systeme/repositories/notification_repository.py
 from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
+
 from app.modules.systeme.models import Notification
 
 

@@ -7,7 +7,9 @@ from app.modules.catalogue.repositories.canal_vente_repository import CanalVente
 from app.modules.catalogue.repositories.conditionnement_repository import ConditionnementRepository
 from app.modules.catalogue.repositories.famille_produit_repository import FamilleProduitRepository
 from app.modules.catalogue.repositories.prix_repository import PrixProduitRepository
-from app.modules.catalogue.repositories.produit_conditionnement_repository import ProduitConditionnementRepository
+from app.modules.catalogue.repositories.produit_conditionnement_repository import (
+    ProduitConditionnementRepository,
+)
 from app.modules.catalogue.repositories.produit_repository import ProduitRepository
 from app.modules.catalogue.repositories.taux_tva_repository import TauxTvaRepository
 from app.modules.catalogue.repositories.unite_mesure_repository import UniteMesureRepository

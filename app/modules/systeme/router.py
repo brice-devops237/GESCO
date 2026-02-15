@@ -4,16 +4,17 @@
 # -----------------------------------------------------------------------------
 
 from datetime import datetime
+
 from fastapi import APIRouter, Query
 
 from app.core.dependencies import DbSession
 from app.modules.parametrage.dependencies import CurrentUser
 from app.modules.systeme import schemas
 from app.modules.systeme.services import (
-    ParametreSystemeService,
     AuditService,
-    NotificationService,
     LicenceLogicielleService,
+    NotificationService,
+    ParametreSystemeService,
 )
 
 router = APIRouter(prefix="/systeme")

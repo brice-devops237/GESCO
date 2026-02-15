@@ -4,7 +4,7 @@
 # repository (Infrastructure) et des schémas ; pas de SQLAlchemy direct.
 # -----------------------------------------------------------------------------
 
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -104,5 +104,5 @@ class EntrepriseService(BaseParametrageService):
 
     async def delete_soft(self, entreprise_id: int) -> None:
         ent = await self.get_or_404(entreprise_id)
-        ent.deleted_at = datetime.now(timezone.utc)
+        ent.deleted_at = datetime.now(UTC)
         await self._repo.update(ent)

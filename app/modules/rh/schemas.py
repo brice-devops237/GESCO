@@ -5,7 +5,6 @@
 
 from datetime import date, datetime
 from decimal import Decimal
-from typing import Optional
 
 from pydantic import BaseModel, ConfigDict, Field
 
@@ -19,9 +18,9 @@ class DepartementCreate(BaseModel):
 
 
 class DepartementUpdate(BaseModel):
-    code: Optional[str] = Field(None, max_length=20)
-    libelle: Optional[str] = Field(None, max_length=100)
-    actif: Optional[bool] = None
+    code: str | None = Field(None, max_length=20)
+    libelle: str | None = Field(None, max_length=100)
+    actif: bool | None = None
 
 
 class DepartementResponse(BaseModel):
@@ -37,24 +36,24 @@ class DepartementResponse(BaseModel):
 # --- Poste ---
 class PosteCreate(BaseModel):
     entreprise_id: int
-    departement_id: Optional[int] = None
+    departement_id: int | None = None
     code: str = Field(..., max_length=20)
     libelle: str = Field(..., max_length=100)
     actif: bool = True
 
 
 class PosteUpdate(BaseModel):
-    departement_id: Optional[int] = None
-    code: Optional[str] = Field(None, max_length=20)
-    libelle: Optional[str] = Field(None, max_length=100)
-    actif: Optional[bool] = None
+    departement_id: int | None = None
+    code: str | None = Field(None, max_length=20)
+    libelle: str | None = Field(None, max_length=100)
+    actif: bool | None = None
 
 
 class PosteResponse(BaseModel):
     model_config = ConfigDict(from_attributes=True)
     id: int
     entreprise_id: int
-    departement_id: Optional[int] = None
+    departement_id: int | None = None
     code: str
     libelle: str
     actif: bool
@@ -70,9 +69,9 @@ class TypeContratCreate(BaseModel):
 
 
 class TypeContratUpdate(BaseModel):
-    code: Optional[str] = Field(None, max_length=20)
-    libelle: Optional[str] = Field(None, max_length=80)
-    actif: Optional[bool] = None
+    code: str | None = Field(None, max_length=20)
+    libelle: str | None = Field(None, max_length=80)
+    actif: bool | None = None
 
 
 class TypeContratResponse(BaseModel):
@@ -88,80 +87,80 @@ class TypeContratResponse(BaseModel):
 # --- Employé ---
 class EmployeCreate(BaseModel):
     entreprise_id: int
-    utilisateur_id: Optional[int] = None
-    departement_id: Optional[int] = None
-    poste_id: Optional[int] = None
-    type_contrat_id: Optional[int] = None
+    utilisateur_id: int | None = None
+    departement_id: int | None = None
+    poste_id: int | None = None
+    type_contrat_id: int | None = None
     matricule: str = Field(..., max_length=30)
     nom: str = Field(..., max_length=80)
     prenom: str = Field(..., max_length=80)
-    date_naissance: Optional[date] = None
-    lieu_naissance: Optional[str] = Field(None, max_length=100)
-    genre: Optional[str] = Field(None, max_length=1)
-    nationalite: Optional[str] = Field(None, max_length=50)
-    niu: Optional[str] = Field(None, max_length=30)
-    numero_cnps: Optional[str] = Field(None, max_length=30)
-    email: Optional[str] = Field(None, max_length=120)
-    telephone: Optional[str] = Field(None, max_length=30)
-    adresse: Optional[str] = Field(None, max_length=255)
+    date_naissance: date | None = None
+    lieu_naissance: str | None = Field(None, max_length=100)
+    genre: str | None = Field(None, max_length=1)
+    nationalite: str | None = Field(None, max_length=50)
+    niu: str | None = Field(None, max_length=30)
+    numero_cnps: str | None = Field(None, max_length=30)
+    email: str | None = Field(None, max_length=120)
+    telephone: str | None = Field(None, max_length=30)
+    adresse: str | None = Field(None, max_length=255)
     date_embauche: date = Field(...)
     salaire_base: Decimal = Field(default=Decimal("0"), ge=0)
-    devise_id: Optional[int] = None
-    compte_bancaire: Optional[str] = Field(None, max_length=50)
-    banque: Optional[str] = Field(None, max_length=80)
+    devise_id: int | None = None
+    compte_bancaire: str | None = Field(None, max_length=50)
+    banque: str | None = Field(None, max_length=80)
     actif: bool = True
 
 
 class EmployeUpdate(BaseModel):
-    utilisateur_id: Optional[int] = None
-    departement_id: Optional[int] = None
-    poste_id: Optional[int] = None
-    type_contrat_id: Optional[int] = None
-    matricule: Optional[str] = Field(None, max_length=30)
-    nom: Optional[str] = Field(None, max_length=80)
-    prenom: Optional[str] = Field(None, max_length=80)
-    date_naissance: Optional[date] = None
-    lieu_naissance: Optional[str] = Field(None, max_length=100)
-    genre: Optional[str] = Field(None, max_length=1)
-    nationalite: Optional[str] = Field(None, max_length=50)
-    niu: Optional[str] = Field(None, max_length=30)
-    numero_cnps: Optional[str] = Field(None, max_length=30)
-    email: Optional[str] = Field(None, max_length=120)
-    telephone: Optional[str] = Field(None, max_length=30)
-    adresse: Optional[str] = Field(None, max_length=255)
-    date_embauche: Optional[date] = None
-    salaire_base: Optional[Decimal] = Field(None, ge=0)
-    devise_id: Optional[int] = None
-    compte_bancaire: Optional[str] = Field(None, max_length=50)
-    banque: Optional[str] = Field(None, max_length=80)
-    actif: Optional[bool] = None
+    utilisateur_id: int | None = None
+    departement_id: int | None = None
+    poste_id: int | None = None
+    type_contrat_id: int | None = None
+    matricule: str | None = Field(None, max_length=30)
+    nom: str | None = Field(None, max_length=80)
+    prenom: str | None = Field(None, max_length=80)
+    date_naissance: date | None = None
+    lieu_naissance: str | None = Field(None, max_length=100)
+    genre: str | None = Field(None, max_length=1)
+    nationalite: str | None = Field(None, max_length=50)
+    niu: str | None = Field(None, max_length=30)
+    numero_cnps: str | None = Field(None, max_length=30)
+    email: str | None = Field(None, max_length=120)
+    telephone: str | None = Field(None, max_length=30)
+    adresse: str | None = Field(None, max_length=255)
+    date_embauche: date | None = None
+    salaire_base: Decimal | None = Field(None, ge=0)
+    devise_id: int | None = None
+    compte_bancaire: str | None = Field(None, max_length=50)
+    banque: str | None = Field(None, max_length=80)
+    actif: bool | None = None
 
 
 class EmployeResponse(BaseModel):
     model_config = ConfigDict(from_attributes=True)
     id: int
     entreprise_id: int
-    utilisateur_id: Optional[int] = None
-    departement_id: Optional[int] = None
-    poste_id: Optional[int] = None
-    type_contrat_id: Optional[int] = None
+    utilisateur_id: int | None = None
+    departement_id: int | None = None
+    poste_id: int | None = None
+    type_contrat_id: int | None = None
     matricule: str
     nom: str
     prenom: str
-    date_naissance: Optional[date] = None
-    lieu_naissance: Optional[str] = None
-    genre: Optional[str] = None
-    nationalite: Optional[str] = None
-    niu: Optional[str] = None
-    numero_cnps: Optional[str] = None
-    email: Optional[str] = None
-    telephone: Optional[str] = None
-    adresse: Optional[str] = None
+    date_naissance: date | None = None
+    lieu_naissance: str | None = None
+    genre: str | None = None
+    nationalite: str | None = None
+    niu: str | None = None
+    numero_cnps: str | None = None
+    email: str | None = None
+    telephone: str | None = None
+    adresse: str | None = None
     date_embauche: date
     salaire_base: Decimal
-    devise_id: Optional[int] = None
-    compte_bancaire: Optional[str] = None
-    banque: Optional[str] = None
+    devise_id: int | None = None
+    compte_bancaire: str | None = None
+    banque: str | None = None
     actif: bool
     created_at: datetime
 
@@ -176,10 +175,10 @@ class TypeCongeCreate(BaseModel):
 
 
 class TypeCongeUpdate(BaseModel):
-    code: Optional[str] = Field(None, max_length=20)
-    libelle: Optional[str] = Field(None, max_length=80)
-    paye: Optional[bool] = None
-    actif: Optional[bool] = None
+    code: str | None = Field(None, max_length=20)
+    libelle: str | None = Field(None, max_length=80)
+    paye: bool | None = None
+    actif: bool | None = None
 
 
 class TypeCongeResponse(BaseModel):
@@ -202,12 +201,12 @@ class DemandeCongeCreate(BaseModel):
     date_fin: date = Field(...)
     nombre_jours: int = Field(..., ge=1)
     statut: str = Field(default="en_attente", max_length=20)
-    motif: Optional[str] = Field(None, max_length=255)
+    motif: str | None = Field(None, max_length=255)
 
 
 class DemandeCongeUpdate(BaseModel):
-    statut: Optional[str] = Field(None, max_length=20)
-    commentaire_refus: Optional[str] = Field(None, max_length=255)
+    statut: str | None = Field(None, max_length=20)
+    commentaire_refus: str | None = Field(None, max_length=255)
 
 
 class DemandeCongeResponse(BaseModel):
@@ -220,11 +219,11 @@ class DemandeCongeResponse(BaseModel):
     date_fin: date
     nombre_jours: int
     statut: str
-    motif: Optional[str] = None
-    commentaire_refus: Optional[str] = None
-    approuve_par_id: Optional[int] = None
-    date_decision: Optional[datetime] = None
-    created_by_id: Optional[int] = None
+    motif: str | None = None
+    commentaire_refus: str | None = None
+    approuve_par_id: int | None = None
+    date_decision: datetime | None = None
+    created_by_id: int | None = None
     created_at: datetime
 
 
@@ -239,8 +238,8 @@ class SoldeCongeCreate(BaseModel):
 
 
 class SoldeCongeUpdate(BaseModel):
-    droits_acquis: Optional[int] = Field(None, ge=0)
-    jours_pris: Optional[int] = Field(None, ge=0)
+    droits_acquis: int | None = Field(None, ge=0)
+    jours_pris: int | None = Field(None, ge=0)
 
 
 class SoldeCongeResponse(BaseModel):
@@ -267,10 +266,10 @@ class ObjectifCreate(BaseModel):
 
 
 class ObjectifUpdate(BaseModel):
-    libelle: Optional[str] = Field(None, max_length=150)
-    date_fin: Optional[date] = None
-    montant_cible: Optional[Decimal] = Field(None, ge=0)
-    atteint: Optional[bool] = None
+    libelle: str | None = Field(None, max_length=150)
+    date_fin: date | None = None
+    montant_cible: Decimal | None = Field(None, ge=0)
+    atteint: bool | None = None
 
 
 class ObjectifResponse(BaseModel):
@@ -296,10 +295,10 @@ class TauxCommissionCreate(BaseModel):
 
 
 class TauxCommissionUpdate(BaseModel):
-    code: Optional[str] = Field(None, max_length=20)
-    libelle: Optional[str] = Field(None, max_length=80)
-    taux_pct: Optional[Decimal] = Field(None, ge=0, le=100)
-    actif: Optional[bool] = None
+    code: str | None = Field(None, max_length=20)
+    libelle: str | None = Field(None, max_length=80)
+    taux_pct: Decimal | None = Field(None, ge=0, le=100)
+    actif: bool | None = None
 
 
 class TauxCommissionResponse(BaseModel):
@@ -317,18 +316,18 @@ class TauxCommissionResponse(BaseModel):
 class CommissionCreate(BaseModel):
     entreprise_id: int
     employe_id: int = Field(...)
-    taux_commission_id: Optional[int] = None
+    taux_commission_id: int | None = None
     date_debut: date = Field(...)
     date_fin: date = Field(...)
     montant: Decimal = Field(default=Decimal("0"), ge=0)
-    libelle: Optional[str] = Field(None, max_length=255)
+    libelle: str | None = Field(None, max_length=255)
     payee: bool = False
 
 
 class CommissionUpdate(BaseModel):
-    montant: Optional[Decimal] = Field(None, ge=0)
-    libelle: Optional[str] = Field(None, max_length=255)
-    payee: Optional[bool] = None
+    montant: Decimal | None = Field(None, ge=0)
+    libelle: str | None = Field(None, max_length=255)
+    payee: bool | None = None
 
 
 class CommissionResponse(BaseModel):
@@ -336,11 +335,11 @@ class CommissionResponse(BaseModel):
     id: int
     entreprise_id: int
     employe_id: int
-    taux_commission_id: Optional[int] = None
+    taux_commission_id: int | None = None
     date_debut: date
     date_fin: date
     montant: Decimal
-    libelle: Optional[str] = None
+    libelle: str | None = None
     payee: bool
     created_at: datetime
 
@@ -351,13 +350,13 @@ class AvanceCreate(BaseModel):
     employe_id: int = Field(...)
     date_avance: date = Field(...)
     montant: Decimal = Field(..., gt=0)
-    motif: Optional[str] = Field(None, max_length=255)
+    motif: str | None = Field(None, max_length=255)
     rembourse: bool = False
 
 
 class AvanceUpdate(BaseModel):
-    motif: Optional[str] = Field(None, max_length=255)
-    rembourse: Optional[bool] = None
+    motif: str | None = Field(None, max_length=255)
+    rembourse: bool | None = None
 
 
 class AvanceResponse(BaseModel):
@@ -367,7 +366,7 @@ class AvanceResponse(BaseModel):
     employe_id: int
     date_avance: date
     montant: Decimal
-    motif: Optional[str] = None
+    motif: str | None = None
     rembourse: bool
-    created_by_id: Optional[int] = None
+    created_by_id: int | None = None
     created_at: datetime

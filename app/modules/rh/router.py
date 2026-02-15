@@ -9,17 +9,17 @@ from app.core.dependencies import DbSession
 from app.modules.parametrage.dependencies import CurrentUser
 from app.modules.rh import schemas
 from app.modules.rh.services import (
-    DepartementService,
-    PosteService,
-    TypeContratService,
-    EmployeService,
-    TypeCongeService,
-    DemandeCongeService,
-    SoldeCongeService,
-    ObjectifService,
-    TauxCommissionService,
-    CommissionService,
     AvanceService,
+    CommissionService,
+    DemandeCongeService,
+    DepartementService,
+    EmployeService,
+    ObjectifService,
+    PosteService,
+    SoldeCongeService,
+    TauxCommissionService,
+    TypeCongeService,
+    TypeContratService,
 )
 
 router = APIRouter(prefix="/rh")

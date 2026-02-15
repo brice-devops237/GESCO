@@ -1,12 +1,12 @@
 # app/modules/systeme/services/parametre_systeme.py
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.modules.parametrage.repositories import EntrepriseRepository
 from app.modules.systeme.models import ParametreSysteme
 from app.modules.systeme.repositories import ParametreSystemeRepository
 from app.modules.systeme.schemas import ParametreSystemeCreate, ParametreSystemeUpdate
 from app.modules.systeme.services.base import BaseSystemeService
 from app.modules.systeme.services.messages import Messages
-from app.modules.parametrage.repositories import EntrepriseRepository
 
 
 class ParametreSystemeService(BaseSystemeService):

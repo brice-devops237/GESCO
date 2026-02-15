@@ -2,13 +2,16 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.modules.paie.models import BulletinPaie, LigneBulletinPaie
-from app.modules.paie.repositories import BulletinPaieRepository, LigneBulletinPaieRepository
+from app.modules.paie.repositories import (
+    BulletinPaieRepository,
+    LigneBulletinPaieRepository,
+    PeriodePaieRepository,
+)
 from app.modules.paie.schemas import BulletinPaieCreate, BulletinPaieUpdate
 from app.modules.paie.services.base import BasePaieService
 from app.modules.paie.services.messages import Messages
 from app.modules.parametrage.repositories import EntrepriseRepository
 from app.modules.rh.repositories import EmployeRepository
-from app.modules.paie.repositories import PeriodePaieRepository
 
 
 class BulletinPaieService(BasePaieService):

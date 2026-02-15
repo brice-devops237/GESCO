@@ -1,11 +1,20 @@
 # app/modules/commercial/services/commande.py
 from sqlalchemy.ext.asyncio import AsyncSession
+
 from app.modules.commercial.models import Commande
-from app.modules.commercial.repositories import CommandeRepository, DevisRepository, EtatDocumentRepository
+from app.modules.commercial.repositories import (
+    CommandeRepository,
+    DevisRepository,
+    EtatDocumentRepository,
+)
 from app.modules.commercial.schemas import CommandeCreate, CommandeUpdate
 from app.modules.commercial.services.base import BaseCommercialService
 from app.modules.commercial.services.messages import Messages
-from app.modules.parametrage.repositories import EntrepriseRepository, PointVenteRepository, DeviseRepository
+from app.modules.parametrage.repositories import (
+    DeviseRepository,
+    EntrepriseRepository,
+    PointVenteRepository,
+)
 from app.modules.partenaires.repositories import TiersRepository
 
 

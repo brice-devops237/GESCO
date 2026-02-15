@@ -1,6 +1,7 @@
 # app/modules/paie/repositories/ligne_bulletin_paie_repository.py
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
+
 from app.modules.paie.models import LigneBulletinPaie
 
 

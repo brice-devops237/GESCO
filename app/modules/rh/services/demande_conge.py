@@ -2,18 +2,20 @@
 # -----------------------------------------------------------------------------
 # Service métier : demandes de congé.
 # -----------------------------------------------------------------------------
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.modules.parametrage.repositories import EntrepriseRepository
 from app.modules.rh.models import DemandeConge
-from app.modules.rh.repositories import DemandeCongeRepository
+from app.modules.rh.repositories import (
+    DemandeCongeRepository,
+    EmployeRepository,
+    TypeCongeRepository,
+)
 from app.modules.rh.schemas import DemandeCongeCreate, DemandeCongeUpdate
 from app.modules.rh.services.base import BaseRHService
 from app.modules.rh.services.messages import Messages
-from app.modules.parametrage.repositories import EntrepriseRepository
-from app.modules.rh.repositories import EmployeRepository, TypeCongeRepository
-
 
 STATUTS_VALIDES = ("brouillon", "en_attente", "approuve", "refuse")
 
@@ -89,7 +91,7 @@ class DemandeCongeService(BaseRHService):
             self._validate_statut(update_data["statut"])
             if update_data["statut"] in ("approuve", "refuse"):
                 ent.approuve_par_id = user_id
-                ent.date_decision = datetime.now(timezone.utc)
+                ent.date_decision = datetime.now(UTC)
         for key, value in update_data.items():
             if isinstance(value, str):
                 value = value.strip() or None

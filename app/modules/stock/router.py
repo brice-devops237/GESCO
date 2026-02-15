@@ -8,7 +8,7 @@ from fastapi import APIRouter, Query
 from app.core.dependencies import DbSession
 from app.modules.parametrage.dependencies import CurrentUser
 from app.modules.stock import schemas
-from app.modules.stock.services import StockService, MouvementService, AlerteService
+from app.modules.stock.services import AlerteService, MouvementService, StockService
 
 router = APIRouter(prefix="/stock")
 

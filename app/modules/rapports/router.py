@@ -4,6 +4,7 @@
 # -----------------------------------------------------------------------------
 
 from datetime import date
+
 from fastapi import APIRouter, Query
 
 from app.core.dependencies import DbSession

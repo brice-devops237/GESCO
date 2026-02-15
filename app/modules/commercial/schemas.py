@@ -5,10 +5,8 @@
 
 from datetime import date, datetime
 from decimal import Decimal
-from typing import Optional
 
 from pydantic import BaseModel, ConfigDict, Field
-
 
 # --- EtatDocument ---
 
@@ -20,9 +18,9 @@ class EtatDocumentCreate(BaseModel):
 
 
 class EtatDocumentUpdate(BaseModel):
-    code: Optional[str] = Field(None, max_length=20)
-    libelle: Optional[str] = Field(None, max_length=80)
-    ordre: Optional[int] = None
+    code: str | None = Field(None, max_length=20)
+    libelle: str | None = Field(None, max_length=80)
+    ordre: int | None = None
 
 
 class EtatDocumentResponse(BaseModel):
@@ -38,11 +36,11 @@ class EtatDocumentResponse(BaseModel):
 
 class DevisCreate(BaseModel):
     entreprise_id: int
-    point_de_vente_id: Optional[int] = None
+    point_de_vente_id: int | None = None
     client_id: int
     numero: str = Field(..., max_length=50)
     date_devis: date
-    date_validite: Optional[date] = None
+    date_validite: date | None = None
     etat_id: int
     montant_ht: Decimal = Field(default=Decimal("0"), ge=0, decimal_places=2)
     montant_tva: Decimal = Field(default=Decimal("0"), ge=0, decimal_places=2)
@@ -51,18 +49,18 @@ class DevisCreate(BaseModel):
     remise_globale_montant: Decimal = Field(default=Decimal("0"), ge=0, decimal_places=2)
     devise_id: int
     taux_change: Decimal = Field(default=Decimal("1"), gt=0, decimal_places=6)
-    notes: Optional[str] = None
-    conditions_generales: Optional[str] = None
+    notes: str | None = None
+    conditions_generales: str | None = None
 
 
 class DevisUpdate(BaseModel):
-    point_de_vente_id: Optional[int] = None
-    date_validite: Optional[date] = None
-    etat_id: Optional[int] = None
-    montant_ht: Optional[Decimal] = Field(None, ge=0, decimal_places=2)
-    montant_tva: Optional[Decimal] = Field(None, ge=0, decimal_places=2)
-    montant_ttc: Optional[Decimal] = Field(None, ge=0, decimal_places=2)
-    notes: Optional[str] = None
+    point_de_vente_id: int | None = None
+    date_validite: date | None = None
+    etat_id: int | None = None
+    montant_ht: Decimal | None = Field(None, ge=0, decimal_places=2)
+    montant_tva: Decimal | None = Field(None, ge=0, decimal_places=2)
+    montant_ttc: Decimal | None = Field(None, ge=0, decimal_places=2)
+    notes: str | None = None
 
 
 class DevisResponse(BaseModel):
@@ -83,24 +81,24 @@ class CommandeCreate(BaseModel):
     entreprise_id: int
     point_de_vente_id: int
     client_id: int
-    devis_id: Optional[int] = None
+    devis_id: int | None = None
     numero: str = Field(..., max_length=50)
     date_commande: date
-    date_livraison_prevue: Optional[date] = None
+    date_livraison_prevue: date | None = None
     etat_id: int
     montant_ht: Decimal = Field(default=Decimal("0"), ge=0, decimal_places=2)
     montant_tva: Decimal = Field(default=Decimal("0"), ge=0, decimal_places=2)
     montant_ttc: Decimal = Field(default=Decimal("0"), ge=0, decimal_places=2)
     devise_id: int
-    adresse_livraison: Optional[str] = None
-    notes: Optional[str] = None
+    adresse_livraison: str | None = None
+    notes: str | None = None
 
 
 class CommandeUpdate(BaseModel):
-    date_livraison_prevue: Optional[date] = None
-    etat_id: Optional[int] = None
-    adresse_livraison: Optional[str] = None
-    notes: Optional[str] = None
+    date_livraison_prevue: date | None = None
+    etat_id: int | None = None
+    adresse_livraison: str | None = None
+    notes: str | None = None
 
 
 class CommandeResponse(BaseModel):
@@ -122,10 +120,10 @@ class FactureCreate(BaseModel):
     entreprise_id: int
     point_de_vente_id: int
     client_id: int
-    commande_id: Optional[int] = None
+    commande_id: int | None = None
     numero: str = Field(..., max_length=50)
     date_facture: date
-    date_echeance: Optional[date] = None
+    date_echeance: date | None = None
     etat_id: int
     type_facture: str = Field(default="facture", max_length=20, description="facture, avoir, proforma ou duplicata (CGI)")
     montant_ht: Decimal = Field(default=Decimal("0"), ge=0, decimal_places=2)
@@ -133,14 +131,14 @@ class FactureCreate(BaseModel):
     montant_ttc: Decimal = Field(default=Decimal("0"), ge=0, decimal_places=2)
     montant_restant_du: Decimal = Field(default=Decimal("0"), ge=0, decimal_places=2)
     devise_id: int
-    notes: Optional[str] = None
+    notes: str | None = None
 
 
 class FactureUpdate(BaseModel):
-    date_echeance: Optional[date] = None
-    etat_id: Optional[int] = None
-    montant_restant_du: Optional[Decimal] = Field(None, ge=0, decimal_places=2)
-    notes: Optional[str] = None
+    date_echeance: date | None = None
+    etat_id: int | None = None
+    montant_restant_du: Decimal | None = Field(None, ge=0, decimal_places=2)
+    notes: str | None = None
 
 
 class FactureResponse(BaseModel):
@@ -163,19 +161,19 @@ class BonLivraisonCreate(BaseModel):
     entreprise_id: int
     point_de_vente_id: int
     client_id: int
-    commande_id: Optional[int] = None
-    facture_id: Optional[int] = None
+    commande_id: int | None = None
+    facture_id: int | None = None
     numero: str = Field(..., max_length=50)
     date_livraison: date
-    adresse_livraison: Optional[str] = None
+    adresse_livraison: str | None = None
     etat_id: int
-    notes: Optional[str] = None
+    notes: str | None = None
 
 
 class BonLivraisonUpdate(BaseModel):
-    adresse_livraison: Optional[str] = None
-    etat_id: Optional[int] = None
-    notes: Optional[str] = None
+    adresse_livraison: str | None = None
+    etat_id: int | None = None
+    notes: str | None = None
 
 
 class BonLivraisonResponse(BaseModel):

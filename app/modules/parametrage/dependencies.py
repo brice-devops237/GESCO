@@ -41,8 +41,8 @@ async def get_current_user(
     user_id_str = payload["sub"]
     try:
         user_id = int(user_id_str)
-    except (ValueError, TypeError):
-        raise UnauthorizedError(detail="Token invalide")
+    except (ValueError, TypeError) as err:
+        raise UnauthorizedError(detail="Token invalide") from err
     repo = UtilisateurRepository(db)
     user = await repo.find_by_id(user_id)
     if not user:

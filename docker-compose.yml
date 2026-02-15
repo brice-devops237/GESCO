@@ -1,19 +1,22 @@
 # Gesco - API + PostgreSQL (développement local)
+# Créer un fichier .env à la racine avec SECRET_KEY (min. 32 caractères).
+# Optionnel : POSTGRES_USER, POSTGRES_PASSWORD, POSTGRES_DB pour la base.
 services:
   api:
     build: .
     ports:
-      - "8000:8000"
+      - "9111:8000"
+    env_file:
+      - .env
     environment:
-      DATABASE_URL: postgresql+asyncpg://gesco:gesco@db:5432/gesco
-      DATABASE_URL_SYNC: postgresql://gesco:gesco@db:5432/gesco
+      DATABASE_URL: postgresql+asyncpg://${POSTGRES_USER:-gesco}:${POSTGRES_PASSWORD:-gesco}@db:5432/${POSTGRES_DB:-gesco}
+      DATABASE_URL_SYNC: postgresql://${POSTGRES_USER:-gesco}:${POSTGRES_PASSWORD:-gesco}@db:5432/${POSTGRES_DB:-gesco}
       APP_ENV: development
-      SECRET_KEY: change-me-in-production
     depends_on:
       db:
         condition: service_healthy
     healthcheck:
-      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/health')"]
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/health')"]
       interval: 10s
       timeout: 5s
       retries: 3
@@ -21,10 +24,12 @@ services:
 
   db:
     image: postgres:16-alpine
+    env_file:
+      - .env
     environment:
-      POSTGRES_USER: gesco
-      POSTGRES_PASSWORD: gesco
-      POSTGRES_DB: gesco
+      POSTGRES_USER: ${POSTGRES_USER:-gesco}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-gesco}
+      POSTGRES_DB: ${POSTGRES_DB:-gesco}
     volumes:
       - gesco_pgdata:/var/lib/postgresql/data
     ports:

@@ -5,8 +5,8 @@
 # -----------------------------------------------------------------------------
 
 from decimal import Decimal
+
 from sqlalchemy import or_, select
-from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.modules.achats.models import Depot
 from app.modules.catalogue.models import Produit

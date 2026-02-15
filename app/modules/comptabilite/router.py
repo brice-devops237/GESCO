@@ -6,14 +6,14 @@
 from fastapi import APIRouter, Query
 
 from app.core.dependencies import DbSession
-from app.modules.parametrage.dependencies import CurrentUser
 from app.modules.comptabilite import schemas
 from app.modules.comptabilite.services import (
     CompteComptableService,
+    EcritureComptableService,
     JournalComptableService,
     PeriodeComptableService,
-    EcritureComptableService,
 )
+from app.modules.parametrage.dependencies import CurrentUser
 
 router = APIRouter(prefix="/comptabilite")
 
@@ -145,7 +145,7 @@ async def get_ecriture_comptable(db: DbSession, current_user: CurrentUser, id: i
     ent, lignes = await EcritureComptableService(db).get_with_lignes(id)
     return schemas.EcritureComptableDetailResponse(
         **schemas.EcritureComptableResponse.model_validate(ent).model_dump(),
-        lignes=[schemas.LigneEcritureResponse.model_validate(l) for l in lignes],
+        lignes=[schemas.LigneEcritureResponse.model_validate(ligne) for ligne in lignes],
     )
 
 

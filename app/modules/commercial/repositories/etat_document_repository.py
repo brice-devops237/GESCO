@@ -1,6 +1,7 @@
 # app/modules/commercial/repositories/etat_document_repository.py
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
+
 from app.modules.commercial.models import EtatDocument
 
 

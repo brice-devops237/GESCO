@@ -1,6 +1,7 @@
 # app/modules/immobilisations/repositories/immobilisation_repository.py
 from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
+
 from app.modules.immobilisations.models import Immobilisation
 
 

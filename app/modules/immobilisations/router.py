@@ -6,9 +6,12 @@
 from fastapi import APIRouter, Query
 
 from app.core.dependencies import DbSession
-from app.modules.parametrage.dependencies import CurrentUser
 from app.modules.immobilisations import schemas
-from app.modules.immobilisations.services import CategorieImmobilisationService, ImmobilisationService
+from app.modules.immobilisations.services import (
+    CategorieImmobilisationService,
+    ImmobilisationService,
+)
+from app.modules.parametrage.dependencies import CurrentUser
 
 router = APIRouter(prefix="/immobilisations")
 

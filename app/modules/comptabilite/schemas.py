@@ -5,7 +5,6 @@
 
 from datetime import date, datetime
 from decimal import Decimal
-from typing import Optional
 
 from pydantic import BaseModel, ConfigDict, Field
 
@@ -20,10 +19,10 @@ class CompteComptableCreate(BaseModel):
 
 
 class CompteComptableUpdate(BaseModel):
-    numero: Optional[str] = Field(None, max_length=20)
-    libelle: Optional[str] = Field(None, max_length=150)
-    sens_normal: Optional[str] = Field(None, max_length=10)
-    actif: Optional[bool] = None
+    numero: str | None = Field(None, max_length=20)
+    libelle: str | None = Field(None, max_length=150)
+    sens_normal: str | None = Field(None, max_length=10)
+    actif: bool | None = None
 
 
 class CompteComptableResponse(BaseModel):
@@ -47,9 +46,9 @@ class JournalComptableCreate(BaseModel):
 
 
 class JournalComptableUpdate(BaseModel):
-    code: Optional[str] = Field(None, max_length=10)
-    libelle: Optional[str] = Field(None, max_length=80)
-    actif: Optional[bool] = None
+    code: str | None = Field(None, max_length=10)
+    libelle: str | None = Field(None, max_length=80)
+    actif: bool | None = None
 
 
 class JournalComptableResponse(BaseModel):
@@ -72,9 +71,9 @@ class PeriodeComptableCreate(BaseModel):
 
 
 class PeriodeComptableUpdate(BaseModel):
-    date_fin: Optional[date] = None
-    libelle: Optional[str] = Field(None, max_length=80)
-    cloturee: Optional[bool] = None
+    date_fin: date | None = None
+    libelle: str | None = Field(None, max_length=80)
+    cloturee: bool | None = None
 
 
 class PeriodeComptableResponse(BaseModel):
@@ -91,7 +90,7 @@ class PeriodeComptableResponse(BaseModel):
 # --- Ligne d'écriture (détail) ---
 class LigneEcritureCreate(BaseModel):
     compte_id: int = Field(...)
-    libelle_ligne: Optional[str] = Field(None, max_length=255)
+    libelle_ligne: str | None = Field(None, max_length=255)
     debit: Decimal = Field(default=Decimal("0"), ge=0)
     credit: Decimal = Field(default=Decimal("0"), ge=0)
 
@@ -101,7 +100,7 @@ class LigneEcritureResponse(BaseModel):
     id: int
     ecriture_id: int
     compte_id: int
-    libelle_ligne: Optional[str] = None
+    libelle_ligne: str | None = None
     debit: Decimal
     credit: Decimal
 
@@ -110,10 +109,10 @@ class LigneEcritureResponse(BaseModel):
 class EcritureComptableCreate(BaseModel):
     entreprise_id: int
     journal_id: int = Field(...)
-    periode_id: Optional[int] = None
+    periode_id: int | None = None
     date_ecriture: date = Field(...)
     numero_piece: str = Field(..., max_length=50)
-    libelle: Optional[str] = Field(None, max_length=255)
+    libelle: str | None = Field(None, max_length=255)
     lignes: list[LigneEcritureCreate] = Field(..., min_length=2)
 
 
@@ -122,11 +121,11 @@ class EcritureComptableResponse(BaseModel):
     id: int
     entreprise_id: int
     journal_id: int
-    periode_id: Optional[int] = None
+    periode_id: int | None = None
     date_ecriture: date
     numero_piece: str
-    libelle: Optional[str] = None
-    created_by_id: Optional[int] = None
+    libelle: str | None = None
+    created_by_id: int | None = None
     created_at: datetime
 
 

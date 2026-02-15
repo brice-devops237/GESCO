@@ -5,12 +5,12 @@
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.modules.parametrage.repositories import EntrepriseRepository
 from app.modules.tresorerie.models import ModePaiement
 from app.modules.tresorerie.repositories import ModePaiementRepository
 from app.modules.tresorerie.schemas import ModePaiementCreate, ModePaiementUpdate
 from app.modules.tresorerie.services.base import BaseTresorerieService
 from app.modules.tresorerie.services.messages import Messages
-from app.modules.parametrage.repositories import EntrepriseRepository
 
 
 class ModePaiementService(BaseTresorerieService):

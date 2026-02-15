@@ -11,7 +11,10 @@ from app.modules.parametrage.repositories import (
     PointVenteRepository,
     UtilisateurRepository,
 )
-from app.modules.parametrage.schemas import AffectationUtilisateurPdvCreate, AffectationUtilisateurPdvUpdate
+from app.modules.parametrage.schemas import (
+    AffectationUtilisateurPdvCreate,
+    AffectationUtilisateurPdvUpdate,
+)
 from app.modules.parametrage.services.base import BaseParametrageService
 from app.modules.parametrage.services.messages import Messages
 

@@ -1,12 +1,12 @@
 # app/modules/systeme/services/notification.py
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.modules.parametrage.repositories import UtilisateurRepository
 from app.modules.systeme.models import Notification
 from app.modules.systeme.repositories import NotificationRepository
 from app.modules.systeme.schemas import NotificationCreate, NotificationUpdate
 from app.modules.systeme.services.base import BaseSystemeService
 from app.modules.systeme.services.messages import Messages
-from app.modules.parametrage.repositories import UtilisateurRepository
 
 
 class NotificationService(BaseSystemeService):

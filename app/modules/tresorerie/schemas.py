@@ -5,7 +5,6 @@
 
 from datetime import date, datetime
 from decimal import Decimal
-from typing import Optional
 
 from pydantic import BaseModel, ConfigDict, Field
 
@@ -19,9 +18,9 @@ class ModePaiementCreate(BaseModel):
 
 
 class ModePaiementUpdate(BaseModel):
-    code: Optional[str] = Field(None, max_length=20)
-    libelle: Optional[str] = Field(None, max_length=80)
-    actif: Optional[bool] = None
+    code: str | None = Field(None, max_length=20)
+    libelle: str | None = Field(None, max_length=80)
+    actif: bool | None = None
 
 
 class ModePaiementResponse(BaseModel):
@@ -45,10 +44,10 @@ class CompteTresorerieCreate(BaseModel):
 
 
 class CompteTresorerieUpdate(BaseModel):
-    type_compte: Optional[str] = Field(None, max_length=20)
-    libelle: Optional[str] = Field(None, max_length=100)
-    devise_id: Optional[int] = None
-    actif: Optional[bool] = None
+    type_compte: str | None = Field(None, max_length=20)
+    libelle: str | None = Field(None, max_length=100)
+    devise_id: int | None = None
+    actif: bool | None = None
 
 
 class CompteTresorerieResponse(BaseModel):
@@ -67,15 +66,15 @@ class CompteTresorerieResponse(BaseModel):
 class ReglementCreate(BaseModel):
     entreprise_id: int
     type_reglement: str = Field(..., max_length=20)  # client | fournisseur
-    facture_id: Optional[int] = None
-    facture_fournisseur_id: Optional[int] = None
+    facture_id: int | None = None
+    facture_fournisseur_id: int | None = None
     tiers_id: int = Field(...)
     montant: Decimal = Field(..., gt=0)
     date_reglement: date = Field(...)
     mode_paiement_id: int = Field(...)
     compte_tresorerie_id: int = Field(...)
-    reference: Optional[str] = Field(None, max_length=100)
-    notes: Optional[str] = Field(None, max_length=2000)
+    reference: str | None = Field(None, max_length=100)
+    notes: str | None = Field(None, max_length=2000)
 
 
 class ReglementResponse(BaseModel):
@@ -83,14 +82,14 @@ class ReglementResponse(BaseModel):
     id: int
     entreprise_id: int
     type_reglement: str
-    facture_id: Optional[int] = None
-    facture_fournisseur_id: Optional[int] = None
+    facture_id: int | None = None
+    facture_fournisseur_id: int | None = None
     tiers_id: int
     montant: Decimal
     date_reglement: date
     mode_paiement_id: int
     compte_tresorerie_id: int
-    reference: Optional[str] = None
-    notes: Optional[str] = None
-    created_by_id: Optional[int] = None
+    reference: str | None = None
+    notes: str | None = None
+    created_by_id: int | None = None
     created_at: datetime

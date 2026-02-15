@@ -5,6 +5,7 @@
 # -----------------------------------------------------------------------------
 
 from enum import Enum
+
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.exceptions import BadRequestError, ConflictError, NotFoundError

@@ -6,7 +6,6 @@
 
 from typing import Any
 
-from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.sql import Executable
 
 from app.core.service_base import BaseService

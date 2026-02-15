@@ -3,8 +3,10 @@
 # Repository MouvementStock (couche Infrastructure).
 # -----------------------------------------------------------------------------
 from datetime import datetime
+
 from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
+
 from app.modules.stock.models import MouvementStock
 
 

@@ -5,14 +5,14 @@
 # Les services (couche Application) dépendent de ces repositories.
 # -----------------------------------------------------------------------------
 
-from app.modules.parametrage.repositories.entreprise_repository import EntrepriseRepository
+from app.modules.parametrage.repositories.affectation_pdv_repository import AffectationPdvRepository
 from app.modules.parametrage.repositories.devise_repository import DeviseRepository
-from app.modules.parametrage.repositories.taux_change_repository import TauxChangeRepository
+from app.modules.parametrage.repositories.entreprise_repository import EntrepriseRepository
+from app.modules.parametrage.repositories.permission_repository import PermissionRepository
 from app.modules.parametrage.repositories.point_vente_repository import PointVenteRepository
 from app.modules.parametrage.repositories.role_repository import RoleRepository
-from app.modules.parametrage.repositories.permission_repository import PermissionRepository
+from app.modules.parametrage.repositories.taux_change_repository import TauxChangeRepository
 from app.modules.parametrage.repositories.utilisateur_repository import UtilisateurRepository
-from app.modules.parametrage.repositories.affectation_pdv_repository import AffectationPdvRepository
 
 __all__ = [
     "AffectationPdvRepository",

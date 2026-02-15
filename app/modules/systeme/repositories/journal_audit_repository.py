@@ -1,7 +1,9 @@
 # app/modules/systeme/repositories/journal_audit_repository.py
 from datetime import datetime
+
 from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
+
 from app.modules.systeme.models import JournalAudit
 
 

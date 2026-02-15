@@ -1,14 +1,15 @@
 # app/modules/systeme/services/licence_logicielle.py
-from datetime import date, datetime
 from calendar import monthrange
+from datetime import date, datetime
+
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.modules.parametrage.repositories import EntrepriseRepository
 from app.modules.systeme.models import LicenceLogicielle
 from app.modules.systeme.repositories import LicenceLogicielleRepository
 from app.modules.systeme.schemas import LicenceLogicielleCreate, LicenceLogicielleUpdate
 from app.modules.systeme.services.base import BaseSystemeService
 from app.modules.systeme.services.messages import Messages
-from app.modules.parametrage.repositories import EntrepriseRepository
 
 # Durées par type (mois) : trial 2, standard 6, premium 12
 DUREE_PAR_TYPE = {"trial": 2, "standard": 6, "premium": 12}

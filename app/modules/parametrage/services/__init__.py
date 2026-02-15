@@ -4,7 +4,9 @@
 # ces classes avec la session DB (ex: EntrepriseService(db)).
 # -----------------------------------------------------------------------------
 
-from app.modules.parametrage.services.affectation_utilisateur_pdv import AffectationUtilisateurPdvService
+from app.modules.parametrage.services.affectation_utilisateur_pdv import (
+    AffectationUtilisateurPdvService,
+)
 from app.modules.parametrage.services.base import BaseParametrageService
 from app.modules.parametrage.services.devise import DeviseService
 from app.modules.parametrage.services.entreprise import EntrepriseService

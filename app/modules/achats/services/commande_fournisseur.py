@@ -11,7 +11,7 @@ from app.modules.achats.schemas import CommandeFournisseurCreate, CommandeFourni
 from app.modules.achats.services.base import BaseAchatsService
 from app.modules.achats.services.messages import Messages
 from app.modules.commercial.repositories import EtatDocumentRepository
-from app.modules.parametrage.repositories import EntrepriseRepository, DeviseRepository
+from app.modules.parametrage.repositories import DeviseRepository, EntrepriseRepository
 from app.modules.partenaires.repositories import TiersRepository
 
 

@@ -1,7 +1,8 @@
 # app/modules/systeme/services/audit.py
 from datetime import datetime
-from sqlalchemy.ext.asyncio import AsyncSession
 from typing import Any
+
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.modules.systeme.models import JournalAudit
 from app.modules.systeme.repositories import JournalAuditRepository

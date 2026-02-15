@@ -6,7 +6,11 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.modules.catalogue.models import PrixProduit
-from app.modules.catalogue.repositories import CanalVenteRepository, PrixProduitRepository, ProduitRepository
+from app.modules.catalogue.repositories import (
+    CanalVenteRepository,
+    PrixProduitRepository,
+    ProduitRepository,
+)
 from app.modules.catalogue.schemas import PrixProduitCreate, PrixProduitUpdate
 from app.modules.catalogue.services.base import BaseCatalogueService
 from app.modules.catalogue.services.messages import Messages

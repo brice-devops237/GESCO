@@ -6,7 +6,11 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.modules.achats.models import Reception, StatutReception
-from app.modules.achats.repositories import CommandeFournisseurRepository, DepotRepository, ReceptionRepository
+from app.modules.achats.repositories import (
+    CommandeFournisseurRepository,
+    DepotRepository,
+    ReceptionRepository,
+)
 from app.modules.achats.schemas import ReceptionCreate, ReceptionUpdate
 from app.modules.achats.services.base import BaseAchatsService
 from app.modules.achats.services.messages import Messages
