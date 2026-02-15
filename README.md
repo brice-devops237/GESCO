@@ -155,7 +155,7 @@ Exemples : `GET/POST/PATCH /commandes-fournisseurs`, `/receptions`, `/factures-f
 |--------|-------|-------------|
 | GET/POST/PATCH | `/modes-paiement`, `/modes-paiement/{id}` | Modes de paiement |
 | GET/POST/PATCH | `/comptes`, `/comptes/{id}` | Comptes de trésorerie |
-| GET/POST/PATCH | `/reglements`, `/reglements/{id}` | Règlements |
+| GET/POST | `/reglements`, `/reglements/{id}` | Règlements (lecture et création ; pas de PATCH) |
 
 ---
 
@@ -204,6 +204,7 @@ Exemples : `GET/POST/PATCH /commandes-fournisseurs`, `/receptions`, `/factures-f
 |--------|-------|-------------|
 | GET/POST/PATCH | `/categories`, `/categories/{id}` | Catégories d’immobilisations |
 | GET/POST/PATCH | `/actifs`, `/actifs/{id}` | Actifs immobilisés |
+| GET | `/actifs/{id}/lignes-amortissement` | Lignes d'amortissement d'un actif (lecture seule) |
 
 ---
 
@@ -344,7 +345,7 @@ Modes de paiement, comptes de trésorerie (caisse / bancaire), règlements (clie
 **Opérations (résumé)**  
 - **Modes de paiement** : GET liste (entreprise_id, actif_only), GET/POST/PATCH. **Exceptions** : 404 (MODE_PAIEMENT_NOT_FOUND), 400/409 (MODE_PAIEMENT_CODE_VIDE, MODE_PAIEMENT_CODE_EXISTS).  
 - **Comptes trésorerie** : GET liste, GET/POST/PATCH. **Exceptions** : 404 (COMPTE_TRESORERIE_NOT_FOUND, DEVISE_NOT_FOUND), 400 (TYPE_COMPTE_INVALIDE).  
-- **Règlements** : GET liste, GET/POST/PATCH. **Exceptions** : 404 (REGLEMENT_NOT_FOUND, TIERS_NOT_FOUND, FACTURE_NOT_FOUND, FACTURE_FOURNISSEUR_NOT_FOUND) ; 400 (TYPE_REGLEMENT_INVALIDE, REGLEMENT_FACTURE_OBLIGATOIRE, REGLEMENT_FACTURE_FOURNISSEUR_OBLIGATOIRE, REGLEMENT_MONTANT_POSITIF).
+- **Règlements** : GET liste, GET/POST (pas de PATCH). **Exceptions** : 404 (REGLEMENT_NOT_FOUND, TIERS_NOT_FOUND, FACTURE_NOT_FOUND, FACTURE_FOURNISSEUR_NOT_FOUND) ; 400 (TYPE_REGLEMENT_INVALIDE, REGLEMENT_FACTURE_OBLIGATOIRE, REGLEMENT_FACTURE_FOURNISSEUR_OBLIGATOIRE, REGLEMENT_MONTANT_POSITIF).
 
 ---
 

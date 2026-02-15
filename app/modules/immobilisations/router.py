@@ -75,3 +75,15 @@ async def create_immobilisation(db: DbSession, current_user: CurrentUser, data: 
 @router.patch("/actifs/{id}", response_model=schemas.ImmobilisationResponse)
 async def update_immobilisation(db: DbSession, current_user: CurrentUser, id: int, data: schemas.ImmobilisationUpdate):
     return await ImmobilisationService(db).update(id, data)
+
+
+@router.get("/actifs/{id}/lignes-amortissement", response_model=list[schemas.LigneAmortissementResponse])
+async def list_lignes_amortissement(
+    db: DbSession,
+    current_user: CurrentUser,
+    id: int,
+    skip: int = Query(0, ge=0),
+    limit: int = Query(200, ge=1, le=500),
+):
+    """Lignes d'amortissement de l'actif (lecture seule)."""
+    return await ImmobilisationService(db).get_lignes_amortissement(id, skip=skip, limit=limit)

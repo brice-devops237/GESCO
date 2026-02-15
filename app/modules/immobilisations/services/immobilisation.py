@@ -2,12 +2,15 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.modules.immobilisations.models import Immobilisation
-from app.modules.immobilisations.repositories import ImmobilisationRepository
+from app.modules.immobilisations.repositories import (
+    CategorieImmobilisationRepository,
+    ImmobilisationRepository,
+    LigneAmortissementRepository,
+)
 from app.modules.immobilisations.schemas import ImmobilisationCreate, ImmobilisationUpdate
 from app.modules.immobilisations.services.base import BaseImmobilisationsService
 from app.modules.immobilisations.services.messages import Messages
 from app.modules.parametrage.repositories import EntrepriseRepository
-from app.modules.immobilisations.repositories import CategorieImmobilisationRepository
 
 
 class ImmobilisationService(BaseImmobilisationsService):
@@ -16,6 +19,7 @@ class ImmobilisationService(BaseImmobilisationsService):
         self._repo = ImmobilisationRepository(db)
         self._entreprise_repo = EntrepriseRepository(db)
         self._categorie_repo = CategorieImmobilisationRepository(db)
+        self._ligne_amort_repo = LigneAmortissementRepository(db)
 
     async def get_by_id(self, id: int) -> Immobilisation | None:
         return await self._repo.find_by_id(id)
@@ -77,3 +81,16 @@ class ImmobilisationService(BaseImmobilisationsService):
                 value = value.strip() or None
             setattr(ent, key, value)
         return await self._repo.update(ent)
+
+    async def get_lignes_amortissement(
+        self,
+        immobilisation_id: int,
+        *,
+        skip: int = 0,
+        limit: int = 200,
+    ):
+        """Liste des lignes d'amortissement d'une immobilisation (lecture seule)."""
+        await self.get_or_404(immobilisation_id)
+        return await self._ligne_amort_repo.find_by_immobilisation(
+            immobilisation_id, skip=skip, limit=limit
+        )
