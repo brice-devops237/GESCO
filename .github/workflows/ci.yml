@@ -10,6 +10,9 @@ on:
 jobs:
   lint:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: backend
     steps:
       - uses: actions/checkout@v4
 
@@ -29,3 +32,6 @@ jobs:
 
       - name: Vérifier l'import de l'app
         run: python -c "from app.main import app; print('OK')"
+
+      - name: Lancer les tests
+        run: pytest tests/ -v --tb=short
