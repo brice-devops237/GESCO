@@ -1,5 +1,24 @@
 <script setup lang="ts">
 import avatar1 from '@images/avatars/avatar-1.png'
+import { useAuthStore } from '@/stores/auth'
+
+const authStore = useAuthStore()
+
+const userInfo = computed(() => authStore.userInfo)
+
+const displayLabel = computed(() => {
+  const { user_id, entreprise_id } = userInfo.value
+  if (entreprise_id != null && user_id != null)
+    return `Compte #${user_id} · Entreprise #${entreprise_id}`
+  if (user_id != null)
+    return `Compte #${user_id}`
+  return 'Compte'
+})
+
+function onLogout() {
+  authStore.logout()
+  // La redirection vers /login est gérée par le watcher dans default.vue
+}
 </script>
 
 <template>
@@ -18,15 +37,13 @@ import avatar1 from '@images/avatars/avatar-1.png'
     >
       <VImg :src="avatar1" />
 
-      <!-- SECTION Menu -->
       <VMenu
         activator="parent"
-        width="230"
+        width="260"
         location="bottom end"
         offset="14px"
       >
         <VList>
-          <!-- 👉 User Avatar & Name -->
           <VListItem>
             <template #prepend>
               <VListItemAction start>
@@ -46,15 +63,13 @@ import avatar1 from '@images/avatars/avatar-1.png'
                 </VBadge>
               </VListItemAction>
             </template>
-
             <VListItemTitle class="font-weight-semibold">
-              John Doe
+              {{ displayLabel }}
             </VListItemTitle>
-            <VListItemSubtitle>Admin</VListItemSubtitle>
+            <VListItemSubtitle>Session Gesco</VListItemSubtitle>
           </VListItem>
           <VDivider class="my-2" />
 
-          <!-- 👉 Profile -->
           <VListItem link>
             <template #prepend>
               <VIcon
@@ -63,11 +78,9 @@ import avatar1 from '@images/avatars/avatar-1.png'
                 size="22"
               />
             </template>
-
-            <VListItemTitle>Profile</VListItemTitle>
+            <VListItemTitle>Profil</VListItemTitle>
           </VListItem>
 
-          <!-- 👉 Settings -->
           <VListItem link>
             <template #prepend>
               <VIcon
@@ -76,41 +89,15 @@ import avatar1 from '@images/avatars/avatar-1.png'
                 size="22"
               />
             </template>
-
-            <VListItemTitle>Settings</VListItemTitle>
+            <VListItemTitle>Paramètres</VListItemTitle>
           </VListItem>
 
-          <!-- 👉 Pricing -->
-          <VListItem link>
-            <template #prepend>
-              <VIcon
-                class="me-2"
-                icon="ri-money-dollar-circle-line"
-                size="22"
-              />
-            </template>
-
-            <VListItemTitle>Pricing</VListItemTitle>
-          </VListItem>
-
-          <!-- 👉 FAQ -->
-          <VListItem link>
-            <template #prepend>
-              <VIcon
-                class="me-2"
-                icon="ri-question-line"
-                size="22"
-              />
-            </template>
-
-            <VListItemTitle>FAQ</VListItemTitle>
-          </VListItem>
-
-          <!-- Divider -->
           <VDivider class="my-2" />
 
-          <!-- 👉 Logout -->
-          <VListItem to="/login">
+          <VListItem
+            role="button"
+            @click="onLogout"
+          >
             <template #prepend>
               <VIcon
                 class="me-2"
@@ -118,12 +105,10 @@ import avatar1 from '@images/avatars/avatar-1.png'
                 size="22"
               />
             </template>
-
-            <VListItemTitle>Logout</VListItemTitle>
+            <VListItemTitle>Déconnexion</VListItemTitle>
           </VListItem>
         </VList>
       </VMenu>
-      <!-- !SECTION -->
     </VAvatar>
   </VBadge>
 </template>

@@ -52,11 +52,20 @@ export default defineConfig({
       '@configured-variables': fileURLToPath(new URL('./src/assets/styles/variables/_template.scss', import.meta.url)),
     },
   },
+  server: {
+    proxy: {
+      '/api': {
+        target: 'http://localhost:9111',
+        changeOrigin: true,
+      },
+    },
+  },
   build: {
     chunkSizeWarningLimit: 5000,
   },
   optimizeDeps: {
     exclude: ['vuetify'],
+    include: ['sweetalert2'],
     entries: [
       './src/**/*.vue',
     ],

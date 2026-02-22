@@ -62,6 +62,14 @@ async def update_depot(db: DbSession, current_user: CurrentUser, id: int, data: 
     return await DepotService(db).update(id, data)
 
 
+@router.delete("/depots/{id}", status_code=204, tags=[TAG_DEPOTS])
+async def delete_depot(db: DbSession, current_user: CurrentUser, id: int):
+    ent = await DepotService(db).get_or_404(id)
+    if ent.entreprise_id != current_user.entreprise_id:
+        raise ForbiddenError(detail="Accès à une autre entreprise non autorisé", code="FORBIDDEN_ENTREPRISE")
+    await DepotService(db).delete(id)
+
+
 # --- Commandes fournisseurs ---
 @router.get("/commandes-fournisseurs", response_model=list[schemas.CommandeFournisseurResponse], tags=[TAG_COMMANDES_FOURNISSEURS])
 async def list_commandes_fournisseurs(

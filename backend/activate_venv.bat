@@ -16,5 +16,5 @@ if not exist "%PYEXE%" (
 echo Demarrage uvicorn sur http://localhost:9111
 echo Docs : http://localhost:9111/docs
 echo.
-"%PYEXE%" -m uvicorn app.main:app --host 0.0.0.0 --port 9000
+"%PYEXE%" -m uvicorn app.main:app --host 0.0.0.0 --port 9111
 pause

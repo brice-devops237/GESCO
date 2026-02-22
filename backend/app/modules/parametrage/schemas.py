@@ -43,6 +43,19 @@ class DeviseResponse(BaseModel):
     actif: bool
 
 
+class ListDevisesResponse(BaseModel):
+    """Réponse paginée de la liste des devises."""
+    items: list[DeviseResponse] = Field(..., description="Liste des devises")
+    total: int = Field(..., description="Nombre total (pour pagination)")
+
+
+class DeviseStatsResponse(BaseModel):
+    """Statistiques globales sur les devises."""
+    total: int = Field(..., description="Nombre total de devises")
+    actives: int = Field(..., description="Nombre de devises actives")
+    inactives: int = Field(..., description="Nombre de devises inactives")
+
+
 # --- Taux de change -----------------------------------------------------------
 
 class TauxChangeCreate(BaseModel):
@@ -70,6 +83,17 @@ class TauxChangeResponse(BaseModel):
     date_effet: date
     source: str | None = None
     created_at: datetime
+
+
+class ListTauxChangeResponse(BaseModel):
+    """Réponse paginée de la liste des taux de change."""
+    items: list[TauxChangeResponse] = Field(..., description="Liste des taux")
+    total: int = Field(..., description="Nombre total (pour pagination)")
+
+
+class TauxChangeStatsResponse(BaseModel):
+    """Statistiques globales sur les taux de change."""
+    total: int = Field(..., description="Nombre total de taux de change")
 
 
 # --- Entreprise ---------------------------------------------------------------
@@ -154,6 +178,21 @@ class EntrepriseResponse(BaseModel):
     updated_at: datetime
 
 
+class ListEntreprisesResponse(BaseModel):
+    """Réponse paginée de la liste des entreprises."""
+    items: list[EntrepriseResponse] = Field(..., description="Liste des entreprises")
+    total: int = Field(..., description="Nombre total d'entreprises (pour pagination)")
+
+
+class EntrepriseStatsResponse(BaseModel):
+    """Statistiques globales sur les entreprises (pour tableau de bord paramétrage)."""
+    total: int = Field(..., description="Nombre total d'entreprises (hors supprimées)")
+    actives: int = Field(..., description="Nombre d'entreprises actives")
+    inactives: int = Field(..., description="Nombre d'entreprises inactives")
+    par_regime_fiscal: dict[str, int] = Field(default_factory=dict, description="Effectif par régime fiscal")
+    par_pays: dict[str, int] = Field(default_factory=dict, description="Effectif par pays (code ISO)")
+
+
 # --- Point de vente ----------------------------------------------------------
 
 class PointDeVenteCreate(BaseModel):
@@ -210,6 +249,20 @@ class PointDeVenteResponse(BaseModel):
     updated_at: datetime
 
 
+class ListPointsVenteResponse(BaseModel):
+    """Réponse paginée de la liste des points de vente d'une entreprise."""
+    items: list[PointDeVenteResponse] = Field(..., description="Liste des points de vente")
+    total: int = Field(..., description="Nombre total (pour pagination)")
+
+
+class PointVenteStatsResponse(BaseModel):
+    """Statistiques des points de vente d'une entreprise."""
+    total: int = Field(..., description="Nombre total de points de vente")
+    actifs: int = Field(..., description="Nombre de points actifs")
+    inactifs: int = Field(..., description="Nombre de points inactifs")
+    par_type: dict[str, int] = Field(default_factory=dict, description="Effectif par type (principal, secondaire, depot)")
+
+
 # --- Rôle --------------------------------------------------------------------
 
 class RoleCreate(BaseModel):
@@ -252,6 +305,18 @@ class PermissionResponse(BaseModel):
     module: str
     action: str
     libelle: str
+
+
+class RoleMinimal(BaseModel):
+    """Rôle minimal (id, code, libellé) pour affichage dans une permission."""
+    id: int
+    code: str
+    libelle: str = ""
+
+
+class PermissionWithRolesResponse(PermissionResponse):
+    """Permission avec la liste des rôles auxquels elle est affectée."""
+    roles: list[RoleMinimal] = []
 
 
 # --- PermissionRole (liaison rôle-permission) --------------------------------
@@ -314,6 +379,12 @@ class UtilisateurResponse(BaseModel):
     derniere_connexion_at: datetime | None = None
     created_at: datetime
     updated_at: datetime
+
+
+class UtilisateurChangePassword(BaseModel):
+    """Schéma pour le changement de mot de passe (par l'utilisateur ou un admin)."""
+    ancien_mot_de_passe: str | None = Field(None, min_length=1, description="Requis si on change son propre mot de passe.")
+    nouveau_mot_de_passe: str = Field(..., min_length=8, max_length=128)
 
 
 # --- Session -----------------------------------------------------------------

@@ -77,3 +77,7 @@ class CanalVenteRepository:
         await self._db.refresh(entity)
         return entity
 
+    async def delete(self, entity: CanalVente) -> None:
+        await self._db.delete(entity)
+        await self._db.flush()
+

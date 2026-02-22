@@ -7,7 +7,7 @@ from datetime import UTC, datetime
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.core.security import hash_password
+from app.core.security import hash_password, verify_password
 from app.modules.parametrage.models import Utilisateur
 from app.modules.parametrage.repositories import (
     EntrepriseRepository,
@@ -15,7 +15,7 @@ from app.modules.parametrage.repositories import (
     RoleRepository,
     UtilisateurRepository,
 )
-from app.modules.parametrage.schemas import UtilisateurCreate, UtilisateurUpdate
+from app.modules.parametrage.schemas import UtilisateurChangePassword, UtilisateurCreate, UtilisateurUpdate
 from app.modules.parametrage.services.base import BaseParametrageService
 from app.modules.parametrage.services.messages import Messages
 
@@ -119,4 +119,37 @@ class UtilisateurService(BaseParametrageService):
         if user is not None:
             user.derniere_connexion_at = datetime.now(UTC)
             await self._repo.update(user)
+
+    async def change_password(
+        self,
+        utilisateur_id: int,
+        data: UtilisateurChangePassword,
+        *,
+        current_user_id: int,
+    ) -> None:
+        """
+        Change le mot de passe d'un utilisateur.
+        Si utilisateur_id == current_user_id : ancien_mot_de_passe requis et vérifié.
+        Sinon (admin) : seul nouveau_mot_de_passe requis.
+        """
+        user = await self.get_or_404(utilisateur_id)
+        nouveau = (data.nouveau_mot_de_passe or "").strip()
+        if len(nouveau) < 8:
+            self._raise_bad_request(Messages.UTILISATEUR_MOT_DE_PASSE_REQUIS)
+        if utilisateur_id == current_user_id:
+            if not (data.ancien_mot_de_passe or "").strip():
+                self._raise_bad_request(Messages.UTILISATEUR_MOT_DE_PASSE_INCORRECT)
+            if not verify_password(data.ancien_mot_de_passe, user.mot_de_passe_hash):
+                self._raise_bad_request(Messages.UTILISATEUR_MOT_DE_PASSE_INCORRECT)
+        user.mot_de_passe_hash = hash_password(nouveau)
+        await self._repo.update(user)
+
+    async def delete_soft(self, utilisateur_id: int) -> None:
+        """Désactivation logique (soft delete) d'un utilisateur."""
+        user = await self.get_or_404(utilisateur_id)
+        if user.deleted_at is not None:
+            self._raise_not_found(Messages.UTILISATEUR_NOT_FOUND)
+        user.deleted_at = datetime.now(UTC)
+        user.actif = False
+        await self._repo.update(user)
 

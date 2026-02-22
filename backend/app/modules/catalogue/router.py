@@ -68,6 +68,12 @@ async def update_unite_mesure(db: DbSession, current_user: CurrentUser, id: int,
     return await UniteMesureService(db).update(id, data)
 
 
+@router.delete("/unites-mesure/{id}", status_code=204, tags=[TAG_UNITES_MESURE])
+async def delete_unite_mesure(db: DbSession, current_user: CurrentUser, id: int):
+    """Suppression d'une unité de mesure."""
+    await UniteMesureService(db).delete(id)
+
+
 # --- Taux TVA ---
 
 @router.get("/taux-tva", response_model=list[schemas.TauxTvaResponse], tags=[TAG_TAUX_TVA])
@@ -98,6 +104,12 @@ async def create_taux_tva(db: DbSession, current_user: CurrentUser, data: schema
 async def update_taux_tva(db: DbSession, current_user: CurrentUser, id: int, data: schemas.TauxTvaUpdate):
     """Mise à jour partielle d'un taux de TVA."""
     return await TauxTvaService(db).update(id, data)
+
+
+@router.delete("/taux-tva/{id}", status_code=204, tags=[TAG_TAUX_TVA])
+async def delete_taux_tva(db: DbSession, current_user: CurrentUser, id: int):
+    """Suppression d'un taux de TVA."""
+    await TauxTvaService(db).delete(id)
 
 
 # --- Familles de produits ---
@@ -197,6 +209,15 @@ async def update_conditionnement(db: DbSession, current_user: CurrentUser, id: i
     if ent.entreprise_id != current_user.entreprise_id:
         raise ForbiddenError(detail="Accès à une autre entreprise non autorisé", code="FORBIDDEN_ENTREPRISE")
     return await ConditionnementService(db).update(id, data)
+
+
+@router.delete("/conditionnements/{id}", status_code=204, tags=[TAG_CONDITIONNEMENTS])
+async def delete_conditionnement(db: DbSession, current_user: CurrentUser, id: int):
+    """Suppression d'un conditionnement."""
+    ent = await ConditionnementService(db).get_or_404(id)
+    if ent.entreprise_id != current_user.entreprise_id:
+        raise ForbiddenError(detail="Accès à une autre entreprise non autorisé", code="FORBIDDEN_ENTREPRISE")
+    await ConditionnementService(db).delete(id)
 
 
 # --- Produits ---
@@ -394,6 +415,15 @@ async def update_canal_vente(db: DbSession, current_user: CurrentUser, id: int, 
     if ent.entreprise_id != current_user.entreprise_id:
         raise ForbiddenError(detail="Accès à une autre entreprise non autorisé", code="FORBIDDEN_ENTREPRISE")
     return await CanalVenteService(db).update(id, data)
+
+
+@router.delete("/canaux-vente/{id}", status_code=204, tags=[TAG_CANAUX_VENTE])
+async def delete_canal_vente(db: DbSession, current_user: CurrentUser, id: int):
+    """Suppression d'un canal de vente."""
+    ent = await CanalVenteService(db).get_or_404(id)
+    if ent.entreprise_id != current_user.entreprise_id:
+        raise ForbiddenError(detail="Accès à une autre entreprise non autorisé", code="FORBIDDEN_ENTREPRISE")
+    await CanalVenteService(db).delete(id)
 
 
 # --- Prix produits ---

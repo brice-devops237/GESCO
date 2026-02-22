@@ -1,0 +1,10 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Gesco",
+    "description": "API backend Gesco – Système de gestion intégré multi-entreprises pour le Cameroun et la zone CEMAC. Couvre paramétrage, catalogue, partenaires, ventes, achats, stock, trésorerie, comptabilité, RH, paie, immobilisations et rapports.",
+    "version": "1.0.0"
+  },
+  "paths": {},
+  "components": { "schemas": {} }
+}

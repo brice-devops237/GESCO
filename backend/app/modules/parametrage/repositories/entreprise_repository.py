@@ -26,6 +26,7 @@ class EntrepriseRepository:
         skip: int = 0,
         limit: int = 100,
         actif_only: bool = False,
+        inactif_only: bool = False,
         search: str | None = None,
     ) -> tuple[list[Entreprise], int]:
         base = Entreprise.deleted_at.is_(None)
@@ -34,6 +35,9 @@ class EntrepriseRepository:
         if actif_only:
             q = q.where(Entreprise.actif.is_(True))
             count_q = count_q.where(Entreprise.actif.is_(True))
+        elif inactif_only:
+            q = q.where(Entreprise.actif.is_(False))
+            count_q = count_q.where(Entreprise.actif.is_(False))
         if search and search.strip():
             term = f"%{search.strip()}%"
             f = or_(
@@ -69,4 +73,36 @@ class EntrepriseRepository:
         await self._db.flush()
         await self._db.refresh(entity)
         return entity
+
+    async def get_stats(self) -> dict:
+        """Statistiques globales sur les entreprises (non supprimées)."""
+        base = Entreprise.deleted_at.is_(None)
+        total_q = select(func.count()).select_from(Entreprise).where(base)
+        total = (await self._db.execute(total_q)).scalar_one() or 0
+        actives_q = select(func.count()).select_from(Entreprise).where(base, Entreprise.actif.is_(True))
+        actives = (await self._db.execute(actives_q)).scalar_one() or 0
+        inactives = total - actives
+        # Répartition par régime fiscal
+        regime_q = (
+            select(Entreprise.regime_fiscal, func.count(Entreprise.id))
+            .where(base)
+            .group_by(Entreprise.regime_fiscal)
+        )
+        regime_rows = (await self._db.execute(regime_q)).all()
+        par_regime_fiscal = {str(r): c for r, c in regime_rows if r}
+        # Répartition par pays
+        pays_q = (
+            select(Entreprise.pays, func.count(Entreprise.id))
+            .where(base, Entreprise.pays.isnot(None))
+            .group_by(Entreprise.pays)
+        )
+        pays_rows = (await self._db.execute(pays_q)).all()
+        par_pays = {str(p): c for p, c in pays_rows if p}
+        return {
+            "total": total,
+            "actives": actives,
+            "inactives": inactives,
+            "par_regime_fiscal": par_regime_fiscal,
+            "par_pays": par_pays,
+        }
 

@@ -70,9 +70,9 @@ import UserProfile from '@/layouts/components/UserProfile.vue'
         />
         <!-- eslint-enable -->
 
-        <h1 class="font-weight-medium leading-normal text-xl text-uppercase">
-          Materio
-        </h1>
+<h1 class="font-weight-medium leading-normal text-xl text-uppercase">
+            Gesco
+          </h1>
       </RouterLink>
 
       <IconBtn

@@ -60,6 +60,12 @@ async def update_type_tiers(
     return await TypeTiersService(db).update(id, data)
 
 
+@router.delete("/types-tiers/{id}", status_code=204, tags=[TAG_TYPES_TIERS])
+async def delete_type_tiers(db: DbSession, current_user: CurrentUser, id: int):
+    """Suppression d'un type de tiers."""
+    await TypeTiersService(db).delete(id)
+
+
 # --- Tiers (clients / fournisseurs) ---
 
 @router.get("/tiers", response_model=list[schemas.TiersResponse], tags=[TAG_TIERS])

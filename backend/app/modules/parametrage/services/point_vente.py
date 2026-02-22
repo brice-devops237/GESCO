@@ -36,7 +36,10 @@ class PointVenteService(BaseParametrageService):
         skip: int = 0,
         limit: int = 100,
         actif_only: bool = False,
-    ) -> list[PointDeVente]:
+        inactif_only: bool = False,
+        search: str | None = None,
+        type_filter: str | None = None,
+    ) -> tuple[list[PointDeVente], int]:
         if await self._entreprise_repo.find_by_id(entreprise_id) is None:
             self._raise_not_found(Messages.ENTREPRISE_NOT_FOUND)
         return await self._repo.find_by_entreprise(
@@ -44,7 +47,16 @@ class PointVenteService(BaseParametrageService):
             skip=skip,
             limit=limit,
             actif_only=actif_only,
+            inactif_only=inactif_only,
+            search=search,
+            type_filter=type_filter,
         )
+
+    async def get_stats(self, entreprise_id: int) -> dict:
+        """Statistiques des points de vente d'une entreprise."""
+        if await self._entreprise_repo.find_by_id(entreprise_id) is None:
+            self._raise_not_found(Messages.ENTREPRISE_NOT_FOUND)
+        return await self._repo.get_stats(entreprise_id)
 
     async def create(self, data: PointDeVenteCreate) -> PointDeVente:
         if await self._entreprise_repo.find_by_id(data.entreprise_id) is None:
@@ -89,4 +101,10 @@ class PointVenteService(BaseParametrageService):
         for key, value in update_data.items():
             setattr(pv, key, value)
         return await self._repo.update(pv)
+
+    async def delete_soft(self, point_vente_id: int) -> None:
+        pv = await self.get_or_404(point_vente_id)
+        if pv.deleted_at is not None:
+            self._raise_not_found(Messages.POINT_VENTE_NOT_FOUND)
+        await self._repo.soft_delete(pv)
 

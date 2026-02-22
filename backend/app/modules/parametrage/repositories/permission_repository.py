@@ -6,7 +6,7 @@
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.modules.parametrage.models import Permission, PermissionRole
+from app.modules.parametrage.models import Permission, PermissionRole, Role
 
 
 class PermissionRepository:
@@ -66,6 +66,23 @@ class PermissionRepository:
             )
         )
         return r.scalar_one_or_none()
+
+    async def find_roles_by_permission_ids(
+        self, permission_ids: list[int]
+    ) -> dict[int, list[Role]]:
+        """Pour chaque permission_id, retourne la liste des rôles auxquels elle est affectée."""
+        if not permission_ids:
+            return {}
+        q = (
+            select(PermissionRole.permission_id, Role)
+            .join(Role, Role.id == PermissionRole.role_id)
+            .where(PermissionRole.permission_id.in_(permission_ids))
+        )
+        r = await self._db.execute(q)
+        out: dict[int, list[Role]] = {pid: [] for pid in permission_ids}
+        for permission_id, role in r.all():
+            out.setdefault(permission_id, []).append(role)
+        return out
 
     async def find_permissions_by_role_id(self, role_id: int) -> set[tuple[str, str]]:
         """Retourne l'ensemble des (module, action) associés au rôle (pour vérification d'autorisation)."""

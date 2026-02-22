@@ -204,7 +204,7 @@ def create_app() -> FastAPI:
         CORSMiddleware,
         allow_origins=settings.cors_origins_list(),
         allow_credentials=settings.CORS_ALLOW_CREDENTIALS,
-        allow_methods=["*"],
+        allow_methods=["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS", "HEAD"],
         allow_headers=["*"],
     )
 
@@ -217,7 +217,8 @@ def create_app() -> FastAPI:
     # --- Routeurs API v1 (ordre = priorité métier, cf. docs/MODULES_PRIORITES.md) ---
     # P0: auth, parametrage | P1: catalogue, partenaires | P2: commercial, achats, stock
     # P3: tresorerie, comptabilite | P4: rh, paie | P5: systeme, rapports, immobilisations
-    prefix = settings.API_V1_PREFIX
+    # Préfixe sans slash final pour éviter double slash (ex. GET /api/v1/auth/entreprises)
+    prefix = settings.API_V1_PREFIX.rstrip("/") or "/api/v1"
     app.include_router(auth_router, prefix=prefix)
     app.include_router(parametrage_router, prefix=prefix)
     app.include_router(catalogue_router, prefix=prefix)

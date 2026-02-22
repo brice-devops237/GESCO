@@ -1,167 +1,138 @@
 <script setup lang="ts">
-import { useTheme } from 'vuetify'
-import AuthProvider from '@/views/pages/authentication/AuthProvider.vue'
+  import { onMounted } from 'vue'
+  import { useTheme } from 'vuetify'
 
-import logo from '@images/logo.svg?raw'
-import authV1MaskDark from '@images/pages/auth-v1-mask-dark.png'
-import authV1MaskLight from '@images/pages/auth-v1-mask-light.png'
-import authV1Tree2 from '@images/pages/auth-v1-tree-2.png'
-import authV1Tree from '@images/pages/auth-v1-tree.png'
+  import logo from '@images/logo.svg?raw'
+  import authV1MaskDark from '@images/pages/auth-v1-mask-dark.png'
+  import authV1MaskLight from '@images/pages/auth-v1-mask-light.png'
+  import authV1Tree2 from '@images/pages/auth-v1-tree-2.png'
+  import authV1Tree from '@images/pages/auth-v1-tree.png'
+  import { getLoginEntreprises } from '@/api/auth'
+  import { useAuthStore } from '@/stores/auth'
+  import { useToastStore } from '@/stores/toast'
+  import { getApiErrorMessage } from '@/utils/apiErrors'
 
-const form = ref({
-  email: '',
-  password: '',
-  remember: false,
-})
+  const router = useRouter()
+  const route = useRoute()
+  const authStore = useAuthStore()
+  const toastStore = useToastStore()
 
-const vuetifyTheme = useTheme()
+  const entreprises = ref([])
+  const loadingEntreprises = ref(false)
 
-const authThemeMask = computed(() => {
-  return vuetifyTheme.global.name.value === 'light'
-    ? authV1MaskLight
-    : authV1MaskDark
-})
+  const form = ref({
+    entreprise_id: null,
+    login: '',
+    password: '',
+    remember: false,
+  })
 
-const isPasswordVisible = ref(false)
+  onMounted(async () => {
+    loadingEntreprises.value = true
+    try {
+      entreprises.value = await getLoginEntreprises()
+      if (entreprises.value.length === 1)
+        form.value.entreprise_id = entreprises.value[0].id
+    }
+    catch (err) {
+      const msg = getApiErrorMessage(err)
+      toastStore.error(msg || 'Impossible de charger la liste des entreprises. Vérifiez que le backend est démarré (port 9111).')
+    }
+    finally {
+      loadingEntreprises.value = false
+    }
+  })
+
+  const vuetifyTheme = useTheme()
+
+  const authThemeMask = computed(() => {
+    return vuetifyTheme.global.name.value === 'light'
+      ? authV1MaskLight
+      : authV1MaskDark
+  })
+
+  const isPasswordVisible = ref(false)
+  const loading = ref(false)
+
+  async function onSubmit() {
+    const entrepriseId = form.value.entreprise_id
+    if (entrepriseId == null) {
+      toastStore.error('Veuillez sélectionner une entreprise.')
+      return
+    }
+    loading.value = true
+    try {
+      await authStore.login({
+        entreprise_id: Number(entrepriseId),
+        login: form.value.login.trim(),
+        password: form.value.password,
+        remember: form.value.remember,
+      })
+      toastStore.success('Connexion réussie.')
+      const redirect = String(route.query.redirect || '/dashboard')
+      await router.replace(redirect.startsWith('/') ? redirect : '/dashboard')
+    }
+    catch (err) {
+      toastStore.error(getApiErrorMessage(err))
+    }
+    finally {
+      loading.value = false
+    }
+  }
 </script>
 
 <template>
   <!-- eslint-disable vue/no-v-html -->
-
   <div class="auth-wrapper d-flex align-center justify-center pa-4">
-    <VCard
-      class="auth-card pa-4 pt-7"
-      max-width="448"
-    >
-      <VCardItem class="justify-center">
-        <RouterLink
-          to="/"
-          class="d-flex align-center gap-3"
-        >
-          <!-- eslint-disable vue/no-v-html -->
-          <div
-            class="d-flex"
-            v-html="logo"
-          />
-          <h2 class="font-weight-medium text-2xl text-uppercase">
-            Materio
-          </h2>
-        </RouterLink>
-      </VCardItem>
-
-      <VCardText class="pt-2">
+    <VCard class="auth-card pa-4 pt-7" max-width="400">
+      <VCardText class="pt-2 text-center">
         <h4 class="text-h4 mb-1">
-          Welcome to Materio! 👋🏻
+          Bienvenue 👋
         </h4>
         <p class="mb-0">
-          Please sign-in to your account and start the adventure
+          Connectez-vous à votre compte.
         </p>
       </VCardText>
 
       <VCardText>
-        <VForm @submit.prevent="() => {}">
+        <VForm @submit.prevent="onSubmit">
           <VRow>
-            <!-- email -->
             <VCol cols="12">
-              <VTextField
-                v-model="form.email"
-                label="Email"
-                type="email"
-              />
+              <VAutocomplete v-model="form.entreprise_id" :items="entreprises" item-title="raison_sociale"
+                item-value="id" label="Entreprise" placeholder="Choisir une entreprise" :loading="loadingEntreprises"
+                clearable prepend-inner-icon="ri-building-line" variant="outlined" density="comfortable" required />
             </VCol>
 
-            <!-- password -->
             <VCol cols="12">
-              <VTextField
-                v-model="form.password"
-                label="Password"
-                placeholder="············"
-                :type="isPasswordVisible ? 'text' : 'password'"
-                autocomplete="password"
-                :append-inner-icon="isPasswordVisible ? 'ri-eye-off-line' : 'ri-eye-line'"
-                @click:append-inner="isPasswordVisible = !isPasswordVisible"
-              />
+              <VTextField v-model="form.login" label="Identifiant" placeholder="Votre identifiant"
+                autocomplete="username" prepend-inner-icon="ri-user-line" variant="outlined" density="comfortable"
+                required />
+            </VCol>
 
-              <!-- remember me checkbox -->
-              <div class="d-flex align-center justify-space-between flex-wrap my-6">
-                <VCheckbox
-                  v-model="form.remember"
-                  label="Remember me"
-                />
+            <VCol cols="12">
+              <VTextField v-model="form.password" label="Mot de passe" placeholder="············"
+                :type="isPasswordVisible ? 'text' : 'password'" autocomplete="current-password"
+                prepend-inner-icon="ri-lock-line"
+                :append-inner-icon="isPasswordVisible ? 'ri-eye-off-line' : 'ri-eye-line'" variant="outlined"
+                density="comfortable" required @click:append-inner="isPasswordVisible = !isPasswordVisible" />
 
-                <a
-                  class="text-primary"
-                  href="javascript:void(0)"
-                >
-                  Forgot Password?
-                </a>
-              </div>
-
-              <!-- login button -->
-              <VBtn
-                block
-                type="submit"
-                to="/"
-              >
-                Login
+              <VBtn class="mt-4" block type="submit" :loading="loading">
+                Connexion
               </VBtn>
-            </VCol>
-
-            <!-- create account -->
-            <VCol
-              cols="12"
-              class="text-center text-base"
-            >
-              <span>New on our platform?</span>
-              <RouterLink
-                class="text-primary ms-2"
-                to="/register"
-              >
-                Create an account
-              </RouterLink>
-            </VCol>
-
-            <VCol
-              cols="12"
-              class="d-flex align-center"
-            >
-              <VDivider />
-              <span class="mx-4">or</span>
-              <VDivider />
-            </VCol>
-
-            <!-- auth providers -->
-            <VCol
-              cols="12"
-              class="text-center"
-            >
-              <AuthProvider />
             </VCol>
           </VRow>
         </VForm>
       </VCardText>
     </VCard>
 
-    <VImg
-      class="auth-footer-start-tree d-none d-md-block"
-      :src="authV1Tree"
-      :width="250"
-    />
+    <VImg class="auth-footer-start-tree d-none d-md-block" :src="authV1Tree" :width="250" />
 
-    <VImg
-      :src="authV1Tree2"
-      class="auth-footer-end-tree d-none d-md-block"
-      :width="350"
-    />
+    <VImg :src="authV1Tree2" class="auth-footer-end-tree d-none d-md-block" :width="350" />
 
-    <!-- bg img -->
-    <VImg
-      class="auth-footer-mask d-none d-md-block"
-      :src="authThemeMask"
-    />
+    <VImg class="auth-footer-mask d-none d-md-block" :src="authThemeMask" />
   </div>
 </template>
 
 <style lang="scss">
-@use "@core/scss/template/pages/page-auth";
+  @use "@core/scss/template/pages/page-auth";
 </style>

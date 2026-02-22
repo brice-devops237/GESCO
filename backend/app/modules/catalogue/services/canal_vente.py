@@ -82,3 +82,7 @@ class CanalVenteService(BaseCatalogueService):
             setattr(ent, key, value)
         return await self._repo.update(ent)
 
+    async def delete(self, id: int) -> None:
+        ent = await self.get_or_404(id)
+        await self._repo.delete(ent)
+

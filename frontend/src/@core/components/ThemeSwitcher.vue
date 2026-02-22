@@ -9,8 +9,13 @@ const props = defineProps<{
 const { name: themeName, global: globalTheme } = useTheme()
 const { state: currentThemeName, next: getNextThemeName, index: currentThemeIndex } = useCycleList(props.themes.map(t => t.name), { initialValue: themeName })
 
+const THEME_STORAGE_KEY = 'gesco_theme'
+
 const changeTheme = () => {
-  globalTheme.name.value = getNextThemeName()
+  const next = getNextThemeName()
+  globalTheme.name.value = next
+  if (typeof window !== 'undefined')
+    localStorage.setItem(THEME_STORAGE_KEY, next)
 }
 
 // Update icon if theme is changed from other sources

@@ -24,6 +24,7 @@ class Messages:
     DEVISE_NOT_FOUND = "Devise non trouvée."
     DEVISE_CODE_VIDE = "Le code devise ne peut pas être vide."
     DEVISE_CODE_EXISTS = "La devise « {code} » existe déjà."
+    DEVISE_USED_IN_TAUX = "Impossible de supprimer : la devise est utilisée dans des taux de change."
 
     # --- Taux de change ---
     TAUX_CHANGE_NOT_FOUND = "Taux de change non trouvé."
@@ -52,6 +53,8 @@ class Messages:
     UTILISATEUR_LOGIN_EXISTS = "Un utilisateur avec le login « {login} » existe déjà pour cette entreprise."
     UTILISATEUR_DESACTIVATED = "Compte utilisateur désactivé."
     UTILISATEUR_LOGIN_INVALID = "Le login ne peut pas être vide."
+    UTILISATEUR_MOT_DE_PASSE_INCORRECT = "Mot de passe actuel incorrect."
+    UTILISATEUR_MOT_DE_PASSE_REQUIS = "Le nouveau mot de passe est requis (8 caractères minimum)."
 
     # --- Affectation utilisateur / PDV ---
     AFFECTATION_NOT_FOUND = "Affectation non trouvée."

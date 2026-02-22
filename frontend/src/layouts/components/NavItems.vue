@@ -1,285 +1,250 @@
 <script lang="ts" setup>
-import VerticalNavSectionTitle from '@/@layouts/components/VerticalNavSectionTitle.vue'
-import VerticalNavGroup from '@layouts/components/VerticalNavGroup.vue'
 import VerticalNavLink from '@layouts/components/VerticalNavLink.vue'
+import VerticalNavGroup from '@layouts/components/VerticalNavGroup.vue'
+
+// Paramétrage : structure → référentiels financiers → sécurité
+const parametrageChildren = [
+  { title: 'Entreprises', icon: 'ri-building-line', to: '/parametrage/entreprises' },
+  { title: 'Points de vente', icon: 'ri-store-2-line', to: '/parametrage/points-vente' },
+  { title: 'Devises', icon: 'ri-money-dollar-circle-line', to: '/parametrage/devises' },
+  { title: 'Taux de change', icon: 'ri-exchange-line', to: '/parametrage/taux-change' },
+  { title: 'Rôles', icon: 'ri-user-shared-line', to: '/parametrage/roles' },
+  { title: 'Permissions', icon: 'ri-lock-2-line', to: '/parametrage/permissions' },
+  { title: 'Utilisateurs', icon: 'ri-team-line', to: '/parametrage/utilisateurs' },
+]
+
+// Partenaires : types → tiers → contacts
+const partenairesChildren = [
+  { title: 'Types de tiers', icon: 'ri-bookmark-line', to: '/partenaires/types-tiers' },
+  { title: 'Tiers', icon: 'ri-group-line', to: '/partenaires/tiers' },
+  { title: 'Contacts', icon: 'ri-contacts-book-line', to: '/partenaires/contacts' },
+]
+
+// Catalogue : référentiels → produits → canaux
+const catalogueChildren = [
+  { title: 'Unités de mesure', icon: 'ri-ruler-line', to: '/catalogue/unites-mesure' },
+  { title: 'Taux TVA', icon: 'ri-percent-line', to: '/catalogue/taux-tva' },
+  { title: 'Familles produits', icon: 'ri-folder-open-line', to: '/catalogue/familles-produits' },
+  { title: 'Conditionnements', icon: 'ri-inbox-line', to: '/catalogue/conditionnements' },
+  { title: 'Produits', icon: 'ri-product-hunt-line', to: '/catalogue/produits' },
+  { title: 'Canaux de vente', icon: 'ri-store-3-line', to: '/catalogue/canaux-vente' },
+]
+
+// Commercial : flux vente (devis → commande → livraison → facture)
+const commercialChildren = [
+  { title: 'Devis', icon: 'ri-file-list-3-line', to: '/commercial/devis' },
+  { title: 'Commandes', icon: 'ri-shopping-cart-line', to: '/commercial/commandes' },
+  { title: 'Bons de livraison', icon: 'ri-truck-line', to: '/commercial/bons-livraison' },
+  { title: 'Factures', icon: 'ri-bill-line', to: '/commercial/factures' },
+]
+
+// Achats : flux achat (commandes → réceptions → factures), dépôts en premier
+const achatsChildren = [
+  { title: 'Dépôts', icon: 'ri-warehouse-line', to: '/achats/depots' },
+  { title: 'Commandes fournisseurs', icon: 'ri-shopping-cart-2-line', to: '/achats/commandes-fournisseurs' },
+  { title: 'Réceptions', icon: 'ri-truck-line', to: '/achats/receptions' },
+  { title: 'Factures fournisseurs', icon: 'ri-bill-line', to: '/achats/factures-fournisseurs' },
+]
+
+// Stock
+const stockChildren = [
+  { title: 'Mouvements', icon: 'ri-arrow-left-right-line', to: '/stock/mouvements' },
+  { title: 'Alertes', icon: 'ri-alarm-warning-line', to: '/stock/alertes' },
+]
+
+// Trésorerie : moyens → comptes → opérations
+const tresorerieChildren = [
+  { title: 'Modes de paiement', icon: 'ri-bank-card-line', to: '/tresorerie/modes-paiement' },
+  { title: 'Comptes trésorerie', icon: 'ri-wallet-3-line', to: '/tresorerie/comptes' },
+  { title: 'Règlements', icon: 'ri-money-dollar-circle-line', to: '/tresorerie/reglements' },
+]
+
+// Comptabilité : plan → journaux → périodes → écritures
+const comptabiliteChildren = [
+  { title: 'Comptes comptables', icon: 'ri-book-open-line', to: '/comptabilite/comptes' },
+  { title: 'Journaux', icon: 'ri-file-list-2-line', to: '/comptabilite/journaux' },
+  { title: 'Périodes', icon: 'ri-calendar-line', to: '/comptabilite/periodes' },
+  { title: 'Écritures', icon: 'ri-file-edit-line', to: '/comptabilite/ecritures' },
+]
+
+// RH : structure → postes → employés
+const rhChildren = [
+  { title: 'Départements', icon: 'ri-building-4-line', to: '/rh/departements' },
+  { title: 'Postes', icon: 'ri-briefcase-line', to: '/rh/postes' },
+  { title: 'Employés', icon: 'ri-user-line', to: '/rh/employes' },
+]
+
+// Paie : paramétrage → bulletins
+const paieChildren = [
+  { title: 'Périodes', icon: 'ri-calendar-line', to: '/paie/periodes' },
+  { title: "Types d'éléments", icon: 'ri-list-check-2', to: '/paie/types-element' },
+  { title: 'Bulletins', icon: 'ri-file-text-line', to: '/paie/bulletins' },
+]
+
+// Immobilisations
+const immobilisationsChildren = [
+  { title: 'Catégories', icon: 'ri-folder-line', to: '/immobilisations/categories' },
+  { title: 'Actifs', icon: 'ri-building-line', to: '/immobilisations/actifs' },
+]
 </script>
 
 <template>
-  <!-- 👉 Dashboards -->
+  <!-- Vue d'ensemble -->
+  <VerticalNavLink
+    :item="{
+      title: 'Tableau de bord',
+      icon: 'ri-dashboard-line',
+      to: '/dashboard',
+    }"
+  />
+
+  <!-- Fondations : structure et référentiels -->
   <VerticalNavGroup
     :item="{
-      title: 'Dashboards',
-      badgeContent: '5',
-      badgeClass: 'bg-error',
-      icon: 'ri-home-smile-line',
+      title: 'Paramétrage',
+      icon: 'ri-settings-3-line',
     }"
   >
     <VerticalNavLink
-      :item="{
-        title: 'Analytics',
-        to: '/dashboard',
-      }"
-    />
-    <VerticalNavLink
-      :item="{
-        title: 'CRM',
-        href: 'https://demos.themeselection.com/materio-vuetify-vuejs-admin-template/demo-1/dashboards/crm',
-        target: '_blank',
-        badgeContent: 'Pro',
-        badgeClass: 'bg-light-primary text-primary',
-      }"
-    />
-    <VerticalNavLink
-      :item="{
-        title: 'ECommerce',
-        href: 'https://demos.themeselection.com/materio-vuetify-vuejs-admin-template/demo-1/dashboards/ecommerce',
-        target: '_blank',
-        badgeContent: 'Pro',
-        badgeClass: 'bg-light-primary text-primary',
-      }"
-    />
-    <VerticalNavLink
-      :item="{
-        title: 'Academy',
-        href: 'https://demos.themeselection.com/materio-vuetify-vuejs-admin-template/demo-1/dashboards/academy',
-        target: '_blank',
-        badgeContent: 'Pro',
-        badgeClass: 'bg-light-primary text-primary',
-      }"
-    />
-    <VerticalNavLink
-      :item="{
-        title: 'Logistics',
-        href: 'https://demos.themeselection.com/materio-vuetify-vuejs-admin-template/demo-1/dashboards/logistics',
-        target: '_blank',
-        badgeContent: 'Pro',
-        badgeClass: 'bg-light-primary text-primary',
-      }"
+      v-for="child in parametrageChildren"
+      :key="child.to"
+      :item="child"
     />
   </VerticalNavGroup>
 
-  <!-- 👉 Front Pages -->
+  <!-- Interlocuteurs -->
   <VerticalNavGroup
     :item="{
-      title: 'Front Pages',
-      icon: 'ri-file-copy-line',
-      badgeContent: 'Pro',
-      badgeClass: 'bg-light-primary text-primary',
+      title: 'Partenaires',
+      icon: 'ri-group-2-line',
     }"
   >
     <VerticalNavLink
-      :item="{
-        title: 'Landing',
-        href: 'https://demos.themeselection.com/materio-vuetify-vuejs-admin-template/demo-1/front-pages/landing-page',
-        target: '_blank',
-      }"
-    />
-    <VerticalNavLink
-      :item="{
-        title: 'Pricing',
-        href: 'https://demos.themeselection.com/materio-vuetify-vuejs-admin-template/demo-1/front-pages/pricing',
-        target: '_blank',
-      }"
-    />
-    <VerticalNavLink
-      :item="{
-        title: 'Payment',
-        href: 'https://demos.themeselection.com/materio-vuetify-vuejs-admin-template/demo-1/front-pages/payment',
-        target: '_blank',
-      }"
-    />
-    <VerticalNavLink
-      :item="{
-        title: 'Checkout',
-        href: 'https://demos.themeselection.com/materio-vuetify-vuejs-admin-template/demo-1/front-pages/checkout',
-        target: '_blank',
-      }"
-    />
-    <VerticalNavLink
-      :item="{
-        title: 'Help Center',
-        href: 'https://demos.themeselection.com/materio-vuetify-vuejs-admin-template/demo-1/front-pages/help-center',
-        target: '_blank',
-      }"
+      v-for="child in partenairesChildren"
+      :key="child.to"
+      :item="child"
     />
   </VerticalNavGroup>
 
-  <!-- 👉 Apps & Pages -->
-  <VerticalNavSectionTitle
+  <!-- Offre produits -->
+  <VerticalNavGroup
     :item="{
-      heading: 'Apps & Pages',
+      title: 'Catalogue',
+      icon: 'ri-archive-line',
     }"
-  />
-  <VerticalNavLink
-    :item="{
-      title: 'Email',
-      icon: 'ri-mail-line',
-      href: 'https://demos.themeselection.com/materio-vuetify-vuejs-admin-template/demo-1/apps/email',
-      target: '_blank',
-      badgeContent: 'Pro',
-      badgeClass: 'bg-light-primary text-primary',
-    }"
-  />
-  <VerticalNavLink
-    :item="{
-      title: 'Chat',
-      icon: 'ri-wechat-line',
-      href: 'https://demos.themeselection.com/materio-vuetify-vuejs-admin-template/demo-1/apps/chat',
-      target: '_blank',
-      badgeContent: 'Pro',
-      badgeClass: 'bg-light-primary text-primary',
-    }"
-  />
-  <VerticalNavLink
-    :item="{
-      title: 'Calendar',
-      icon: 'ri-calendar-line',
-      href: 'https://demos.themeselection.com/materio-vuetify-vuejs-admin-template/demo-1/apps/calendar',
-      target: '_blank',
-      badgeContent: 'Pro',
-      badgeClass: 'bg-light-primary text-primary',
-    }"
-  />
-  <VerticalNavLink
-    :item="{
-      title: 'Kanban',
-      icon: 'ri-drag-drop-line',
-      href: 'https://demos.themeselection.com/materio-vuetify-vuejs-admin-template/demo-1/apps/kanban',
-      target: '_blank',
-      badgeContent: 'Pro',
-      badgeClass: 'bg-light-primary text-primary',
-    }"
-  />
+  >
+    <VerticalNavLink
+      v-for="child in catalogueChildren"
+      :key="child.to"
+      :item="child"
+    />
+  </VerticalNavGroup>
 
-  <VerticalNavLink
+  <!-- Cycle vente -->
+  <VerticalNavGroup
     :item="{
-      title: 'Account Settings',
-      icon: 'ri-user-settings-line',
-      to: '/account-settings',
+      title: 'Commercial',
+      icon: 'ri-file-list-3-line',
     }"
-  />
+  >
+    <VerticalNavLink
+      v-for="child in commercialChildren"
+      :key="child.to"
+      :item="child"
+    />
+  </VerticalNavGroup>
 
-  <VerticalNavLink
+  <!-- Cycle achat -->
+  <VerticalNavGroup
     :item="{
-      title: 'Login',
-      icon: 'ri-login-box-line',
-      to: '/login',
+      title: 'Achats',
+      icon: 'ri-shopping-cart-2-line',
     }"
-  />
-  <VerticalNavLink
-    :item="{
-      title: 'Register',
-      icon: 'ri-user-add-line',
-      to: '/register',
-    }"
-  />
-  <VerticalNavLink
-    :item="{
-      title: 'Error',
-      icon: 'ri-information-line',
-      to: '/no-existence',
-    }"
-  />
+  >
+    <VerticalNavLink
+      v-for="child in achatsChildren"
+      :key="child.to"
+      :item="child"
+    />
+  </VerticalNavGroup>
 
-  <!-- 👉 User Interface -->
-  <VerticalNavSectionTitle
+  <!-- Inventaire -->
+  <VerticalNavGroup
     :item="{
-      heading: 'User Interface',
+      title: 'Stock',
+      icon: 'ri-box-3-line',
     }"
-  />
-  <VerticalNavLink
-    :item="{
-      title: 'Typography',
-      icon: 'ri-text',
-      to: '/typography',
-    }"
-  />
-  <VerticalNavLink
-    :item="{
-      title: 'Icons',
-      icon: 'ri-remixicon-line',
-      to: '/icons',
-    }"
-  />
-  <VerticalNavLink
-    :item="{
-      title: 'Cards',
-      icon: 'ri-bar-chart-box-line',
-      to: '/cards',
-    }"
-  />
+  >
+    <VerticalNavLink
+      v-for="child in stockChildren"
+      :key="child.to"
+      :item="child"
+    />
+  </VerticalNavGroup>
 
-  <!-- 👉 Forms & Tables -->
-  <VerticalNavSectionTitle
+  <!-- Finance : trésorerie puis comptabilité -->
+  <VerticalNavGroup
     :item="{
-      heading: 'Forms & Tables',
+      title: 'Trésorerie',
+      icon: 'ri-bank-line',
     }"
-  />
-  <VerticalNavLink
+  >
+    <VerticalNavLink
+      v-for="child in tresorerieChildren"
+      :key="child.to"
+      :item="child"
+    />
+  </VerticalNavGroup>
+  <VerticalNavGroup
     :item="{
-      title: 'Form Layouts',
-      icon: 'ri-layout-4-line',
-      to: '/form-layouts',
+      title: 'Comptabilité',
+      icon: 'ri-book-2-line',
     }"
-  />
-  <VerticalNavLink
-    :item="{
-      title: 'Form Validation',
-      icon: 'ri-checkbox-multiple-line',
-      href: 'https://demos.themeselection.com/materio-vuetify-vuejs-admin-template/demo-1/forms/form-validation',
-      target: '_blank',
-      badgeContent: 'Pro',
-      badgeClass: 'bg-light-primary text-primary',
-    }"
-  />
-  <VerticalNavLink
-    :item="{
-      title: 'Form Wizard',
-      icon: 'ri-git-commit-line',
-      href: 'https://demos.themeselection.com/materio-vuetify-vuejs-admin-template/demo-1/forms/form-wizard-numbered',
-      target: '_blank',
-      badgeContent: 'Pro',
-      badgeClass: 'bg-light-primary text-primary',
-    }"
-  />
-  <VerticalNavLink
-    :item="{
-      title: 'Tables',
-      icon: 'ri-table-alt-line',
-      to: '/tables',
-    }"
-  />
+  >
+    <VerticalNavLink
+      v-for="child in comptabiliteChildren"
+      :key="child.to"
+      :item="child"
+    />
+  </VerticalNavGroup>
 
-  <!-- 👉 Others -->
-  <VerticalNavSectionTitle
+  <!-- Ressources humaines et paie -->
+  <VerticalNavGroup
     :item="{
-      heading: 'Others',
+      title: 'RH',
+      icon: 'ri-user-star-line',
     }"
-  />
-  <VerticalNavLink
+  >
+    <VerticalNavLink
+      v-for="child in rhChildren"
+      :key="child.to"
+      :item="child"
+    />
+  </VerticalNavGroup>
+  <VerticalNavGroup
     :item="{
-      title: 'Access Control',
-      icon: 'ri-shield-line',
-      href: 'https://demos.themeselection.com/materio-vuetify-vuejs-admin-template/demo-1/access-control',
-      target: '_blank',
-      badgeContent: 'Pro',
-      badgeClass: 'bg-light-primary text-primary',
+      title: 'Paie',
+      icon: 'ri-money-cny-circle-line',
     }"
-  />
-  <VerticalNavLink
+  >
+    <VerticalNavLink
+      v-for="child in paieChildren"
+      :key="child.to"
+      :item="child"
+    />
+  </VerticalNavGroup>
+
+  <!-- Actifs -->
+  <VerticalNavGroup
     :item="{
-      title: 'Documentation',
-      icon: 'ri-article-line',
-      href: 'https://demos.themeselection.com/materio-vuetify-vuejs-admin-template/documentation/',
-      target: '_blank',
+      title: 'Immobilisations',
+      icon: 'ri-building-2-line',
     }"
-  />
-  <VerticalNavLink
-    :item="{
-      title: 'Raise Support',
-      href: 'https://github.com/themeselection/materio-vuetify-vuejs-admin-template-free/issues',
-      icon: 'ri-lifebuoy-line',
-      target: '_blank',
-    }"
-  />
+  >
+    <VerticalNavLink
+      v-for="child in immobilisationsChildren"
+      :key="child.to"
+      :item="child"
+    />
+  </VerticalNavGroup>
 </template>

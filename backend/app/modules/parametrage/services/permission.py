@@ -7,7 +7,12 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.modules.parametrage.models import Permission, PermissionRole
 from app.modules.parametrage.repositories import PermissionRepository, RoleRepository
-from app.modules.parametrage.schemas import PermissionCreate, PermissionRoleCreate
+from app.modules.parametrage.schemas import (
+    PermissionCreate,
+    PermissionRoleCreate,
+    PermissionWithRolesResponse,
+    RoleMinimal,
+)
 from app.modules.parametrage.services.base import BaseParametrageService
 from app.modules.parametrage.services.messages import Messages
 
@@ -41,6 +46,34 @@ class PermissionService(BaseParametrageService):
             limit=limit,
             module=module,
         )
+
+    async def get_permissions_with_roles(
+        self,
+        *,
+        skip: int = 0,
+        limit: int = 200,
+        module: str | None = None,
+    ) -> list[PermissionWithRolesResponse]:
+        """Liste des permissions avec les rôles auxquels chacune est affectée."""
+        perms = await self._repo.find_all(
+            skip=skip,
+            limit=limit,
+            module=module,
+        )
+        if not perms:
+            return []
+        perm_ids = [p.id for p in perms]
+        roles_by_perm = await self._repo.find_roles_by_permission_ids(perm_ids)
+        return [
+            PermissionWithRolesResponse(
+                id=p.id,
+                module=p.module,
+                action=p.action,
+                libelle=p.libelle,
+                roles=[RoleMinimal(id=r.id, code=r.code, libelle=r.libelle or r.code) for r in roles_by_perm.get(p.id, [])],
+            )
+            for p in perms
+        ]
 
     async def create(self, data: PermissionCreate) -> Permission:
         module = (data.module or "").strip()

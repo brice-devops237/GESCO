@@ -77,3 +77,7 @@ class ConditionnementRepository:
         await self._db.refresh(entity)
         return entity
 
+    async def delete(self, entity: Conditionnement) -> None:
+        await self._db.delete(entity)
+        await self._db.flush()
+

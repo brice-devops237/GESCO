@@ -7,6 +7,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.modules.parametrage.models import Devise
 from app.modules.parametrage.repositories import DeviseRepository
+from app.modules.parametrage.repositories.taux_change_repository import TauxChangeRepository
 from app.modules.parametrage.schemas import DeviseCreate, DeviseUpdate
 from app.modules.parametrage.services.base import BaseParametrageService
 from app.modules.parametrage.services.messages import Messages
@@ -18,6 +19,7 @@ class DeviseService(BaseParametrageService):
     def __init__(self, db: AsyncSession) -> None:
         super().__init__(db)
         self._repo = DeviseRepository(db)
+        self._taux_repo = TauxChangeRepository(db)
 
     async def get_by_id(self, devise_id: int) -> Devise | None:
         """Retourne une devise par id ou None."""
@@ -39,13 +41,23 @@ class DeviseService(BaseParametrageService):
         skip: int = 0,
         limit: int = 100,
         actif_only: bool = False,
-    ) -> list[Devise]:
-        """Liste les devises avec filtres optionnels."""
+        inactif_only: bool = False,
+        search: str | None = None,
+        decimales: int | None = None,
+    ) -> tuple[list[Devise], int]:
+        """Liste les devises avec filtres optionnels (recherche texte, statut, décimales). Retourne (items, total)."""
         return await self._repo.find_all(
             skip=skip,
             limit=limit,
             actif_only=actif_only,
+            inactif_only=inactif_only,
+            search=search,
+            decimales=decimales,
         )
+
+    async def get_stats(self) -> dict:
+        """Statistiques globales sur les devises (total, actives, inactives)."""
+        return await self._repo.get_stats()
 
     async def create(self, data: DeviseCreate) -> Devise:
         """Crée une devise après validation du code (non vide, unique)."""
@@ -69,4 +81,12 @@ class DeviseService(BaseParametrageService):
         for key, value in data.model_dump(exclude_unset=True).items():
             setattr(dev, key, value)
         return await self._repo.update(dev)
+
+    async def delete(self, devise_id: int) -> None:
+        """Supprime une devise. Refuse si elle est utilisée dans des taux de change."""
+        dev = await self.get_or_404(devise_id)
+        n = await self._taux_repo.count_by_devise_id(devise_id)
+        if n > 0:
+            self._raise_conflict(Messages.DEVISE_USED_IN_TAUX)
+        await self._repo.delete(dev)
 

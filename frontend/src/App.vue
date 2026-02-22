@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import UpgradeToPro from '@/components/UpgradeToPro.vue'
+import ToastSnackbar from '@/components/ToastSnackbar.vue'
 </script>
 
 <template>
   <VApp>
     <RouterView />
-    <UpgradeToPro />
+    <ToastSnackbar />
   </VApp>
 </template>

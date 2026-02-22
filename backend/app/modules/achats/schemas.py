@@ -76,11 +76,18 @@ class CommandeFournisseurResponse(BaseModel):
     id: int
     entreprise_id: int
     fournisseur_id: int
+    depot_id: int | None = None
     numero: str
+    numero_fournisseur: str | None = None
     date_commande: date
+    date_livraison_prevue: date | None = None
     delai_livraison_jours: int | None = None
     etat_id: int
+    montant_ht: Decimal
+    montant_tva: Decimal
     montant_ttc: Decimal
+    devise_id: int
+    notes: str | None = None
     created_at: datetime
 
 
@@ -109,6 +116,7 @@ class ReceptionResponse(BaseModel):
     numero_bl_fournisseur: str | None = None
     date_reception: date
     etat: str
+    notes: str | None = None
     created_at: datetime
 
 
@@ -144,9 +152,11 @@ class FactureFournisseurResponse(BaseModel):
     id: int
     entreprise_id: int
     fournisseur_id: int
+    commande_fournisseur_id: int | None = None
     numero_fournisseur: str
     type_facture: str = "facture"
     date_facture: date
+    date_echeance: date | None = None
     date_reception_facture: date | None = None
     montant_ttc: Decimal
     montant_restant_du: Decimal

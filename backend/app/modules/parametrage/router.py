@@ -6,6 +6,7 @@
 # -----------------------------------------------------------------------------
 
 from fastapi import APIRouter, Query
+from fastapi.responses import Response
 
 from app.core.dependencies import DbSession
 from app.core.exceptions import ForbiddenError
@@ -39,7 +40,17 @@ TAG_AFFECTATIONS_PDV = "Paramétrage - Affectations utilisateur-PDV"
 
 # --- Entreprises ---
 
-@router.get("/entreprises", response_model=list[schemas.EntrepriseResponse], tags=[TAG_ENTREPRISES])
+@router.get("/entreprises/stats", response_model=schemas.EntrepriseStatsResponse, tags=[TAG_ENTREPRISES])
+async def get_entreprises_stats(
+    db: DbSession,
+    current_user: CurrentUser,
+    _perm: None = RequirePermission("parametrage", "read"),
+):
+    """Statistiques globales sur les entreprises (total, actives, inactives, répartition par régime et pays)."""
+    return await EntrepriseService(db).get_stats()
+
+
+@router.get("/entreprises", response_model=schemas.ListEntreprisesResponse, tags=[TAG_ENTREPRISES])
 async def list_entreprises(
     db: DbSession,
     current_user: CurrentUser,
@@ -47,14 +58,15 @@ async def list_entreprises(
     skip: int = Query(0, ge=0),
     limit: int = Query(20, ge=1, le=100),
     actif_only: bool = False,
+    inactif_only: bool = False,
     search: str | None = None,
 ):
-    """Liste paginée des entreprises."""
+    """Liste paginée des entreprises (items + total pour la pagination)."""
     service = EntrepriseService(db)
-    items, _ = await service.get_entreprises(
-        skip=skip, limit=limit, actif_only=actif_only, search=search
+    items, total = await service.get_entreprises(
+        skip=skip, limit=limit, actif_only=actif_only, inactif_only=inactif_only, search=search
     )
-    return items
+    return schemas.ListEntreprisesResponse(items=items, total=total)
 
 
 @router.get("/entreprises/{entreprise_id}", response_model=schemas.EntrepriseResponse, tags=[TAG_ENTREPRISES])
@@ -64,9 +76,7 @@ async def get_entreprise(
     entreprise_id: int,
     _perm: None = RequirePermission("parametrage", "read"),
 ):
-    """Détail d'une entreprise par id."""
-    if entreprise_id != current_user.entreprise_id:
-        raise ForbiddenError(detail="Accès à une autre entreprise non autorisé", code="FORBIDDEN_ENTREPRISE")
+    """Détail d'une entreprise par id. Accessible pour toute entreprise si l'utilisateur a la permission parametrage read (liste / édition)."""
     return await EntrepriseService(db).get_or_404(entreprise_id)
 
 
@@ -110,7 +120,18 @@ async def delete_entreprise(
 
 # --- Devises ---
 
-@router.get("/devises", response_model=list[schemas.DeviseResponse], tags=[TAG_DEVISES])
+@router.get("/devises/stats", response_model=schemas.DeviseStatsResponse, tags=[TAG_DEVISES])
+async def get_devises_stats(
+    db: DbSession,
+    current_user: CurrentUser,
+    _perm: None = RequirePermission("parametrage", "read"),
+):
+    """Statistiques globales sur les devises (total, actives, inactives)."""
+    data = await DeviseService(db).get_stats()
+    return schemas.DeviseStatsResponse(**data)
+
+
+@router.get("/devises", response_model=schemas.ListDevisesResponse, tags=[TAG_DEVISES])
 async def list_devises(
     db: DbSession,
     current_user: CurrentUser,
@@ -118,11 +139,20 @@ async def list_devises(
     skip: int = Query(0, ge=0),
     limit: int = Query(100, ge=1, le=100),
     actif_only: bool = False,
+    inactif_only: bool = Query(False, description="Si True, ne retourne que les devises inactives"),
+    search: str | None = Query(None, description="Recherche sur code, libellé, symbole"),
+    decimales: int | None = Query(None, ge=0, le=6, description="Filtrer par nombre de décimales"),
 ):
-    """Liste des devises (référentiel)."""
-    return await DeviseService(db).get_devises(
-        skip=skip, limit=limit, actif_only=actif_only
+    """Liste paginée des devises (items + total)."""
+    items, total = await DeviseService(db).get_devises(
+        skip=skip,
+        limit=limit,
+        actif_only=actif_only,
+        inactif_only=inactif_only,
+        search=search,
+        decimales=decimales,
     )
+    return schemas.ListDevisesResponse(items=items, total=total)
 
 
 @router.get("/devises/{devise_id}", response_model=schemas.DeviseResponse, tags=[TAG_DEVISES])
@@ -159,9 +189,33 @@ async def update_devise(
     return await DeviseService(db).update(devise_id, data)
 
 
+@router.delete("/devises/{devise_id}", status_code=204, tags=[TAG_DEVISES])
+async def delete_devise(
+    db: DbSession,
+    current_user: CurrentUser,
+    devise_id: int,
+    _perm: None = RequirePermission("parametrage", "write"),
+):
+    """Suppression d'une devise. Refusée si la devise est utilisée dans des taux de change."""
+    await DeviseService(db).delete(devise_id)
+    return Response(status_code=204)
+
+
 # --- Taux de change ---
 
-@router.get("/taux-change", response_model=list[schemas.TauxChangeResponse], tags=[TAG_TAUX_CHANGE])
+# Chemin à 3 segments pour éviter que GET /taux-change/{taux_id} matche "stats" comme taux_id (422)
+@router.get("/taux-change/stats/summary", response_model=schemas.TauxChangeStatsResponse, tags=[TAG_TAUX_CHANGE])
+async def get_taux_change_stats(
+    db: DbSession,
+    current_user: CurrentUser,
+    _perm: None = RequirePermission("parametrage", "read"),
+):
+    """Statistiques globales sur les taux de change (total)."""
+    data = await TauxChangeService(db).get_stats()
+    return schemas.TauxChangeStatsResponse(total=int(data["total"]))
+
+
+@router.get("/taux-change", response_model=schemas.ListTauxChangeResponse, tags=[TAG_TAUX_CHANGE])
 async def list_taux_change(
     db: DbSession,
     current_user: CurrentUser,
@@ -170,14 +224,22 @@ async def list_taux_change(
     limit: int = Query(100, ge=1, le=100),
     devise_from_id: int | None = None,
     devise_to_id: int | None = None,
+    date_effet_min: str | None = Query(None, description="Date d'effet min (YYYY-MM-DD)"),
+    date_effet_max: str | None = Query(None, description="Date d'effet max (YYYY-MM-DD)"),
 ):
-    """Liste des taux de change (filtres optionnels)."""
-    return await TauxChangeService(db).get_taux_changes(
+    """Liste paginée des taux de change (items + total)."""
+    from datetime import date as date_cls
+    d_min = date_cls.fromisoformat(date_effet_min) if date_effet_min else None
+    d_max = date_cls.fromisoformat(date_effet_max) if date_effet_max else None
+    items, total = await TauxChangeService(db).get_taux_changes(
         skip=skip,
         limit=limit,
         devise_from_id=devise_from_id,
         devise_to_id=devise_to_id,
+        date_effet_min=d_min,
+        date_effet_max=d_max,
     )
+    return schemas.ListTauxChangeResponse(items=items, total=total)
 
 
 @router.get("/taux-change/{taux_id}", response_model=schemas.TauxChangeResponse, tags=[TAG_TAUX_CHANGE])
@@ -202,9 +264,46 @@ async def create_taux_change(
     return await TauxChangeService(db).create(data)
 
 
+@router.patch("/taux-change/{taux_id}", response_model=schemas.TauxChangeResponse, tags=[TAG_TAUX_CHANGE])
+async def update_taux_change(
+    db: DbSession,
+    current_user: CurrentUser,
+    taux_id: int,
+    data: schemas.TauxChangeUpdate,
+    _perm: None = RequirePermission("parametrage", "write"),
+):
+    """Mise à jour partielle d'un taux de change (taux, source)."""
+    return await TauxChangeService(db).update(taux_id, data)
+
+
+@router.delete("/taux-change/{taux_id}", status_code=204, tags=[TAG_TAUX_CHANGE])
+async def delete_taux_change(
+    db: DbSession,
+    current_user: CurrentUser,
+    taux_id: int,
+    _perm: None = RequirePermission("parametrage", "write"),
+):
+    """Suppression d'un taux de change."""
+    await TauxChangeService(db).delete(taux_id)
+    return Response(status_code=204)
+
+
 # --- Points de vente ---
 
-@router.get("/entreprises/{entreprise_id}/points-vente", response_model=list[schemas.PointDeVenteResponse], tags=[TAG_POINTS_VENTE])
+@router.get("/entreprises/{entreprise_id}/points-vente/stats", response_model=schemas.PointVenteStatsResponse, tags=[TAG_POINTS_VENTE])
+async def get_points_vente_stats(
+    db: DbSession,
+    current_user: CurrentUser,
+    entreprise_id: int,
+    _perm: None = RequirePermission("parametrage", "read"),
+):
+    """Statistiques des points de vente d'une entreprise."""
+    if entreprise_id != current_user.entreprise_id:
+        raise ForbiddenError(detail="Accès à une autre entreprise non autorisé", code="FORBIDDEN_ENTREPRISE")
+    return await PointVenteService(db).get_stats(entreprise_id)
+
+
+@router.get("/entreprises/{entreprise_id}/points-vente", response_model=schemas.ListPointsVenteResponse, tags=[TAG_POINTS_VENTE])
 async def list_points_vente(
     db: DbSession,
     current_user: CurrentUser,
@@ -213,13 +312,23 @@ async def list_points_vente(
     skip: int = Query(0, ge=0),
     limit: int = Query(100, ge=1, le=100),
     actif_only: bool = False,
+    inactif_only: bool = Query(False, description="Si True, ne retourne que les points inactifs"),
+    search: str | None = Query(None, description="Recherche sur code, libellé, ville"),
+    type: str | None = Query(None, description="Filtrer par type : principal, secondaire, depot"),
 ):
-    """Liste des points de vente d'une entreprise."""
+    """Liste paginée des points de vente d'une entreprise (items + total)."""
     if entreprise_id != current_user.entreprise_id:
         raise ForbiddenError(detail="Accès à une autre entreprise non autorisé", code="FORBIDDEN_ENTREPRISE")
-    return await PointVenteService(db).get_points_vente(
-        entreprise_id, skip=skip, limit=limit, actif_only=actif_only
+    items, total = await PointVenteService(db).get_points_vente(
+        entreprise_id,
+        skip=skip,
+        limit=limit,
+        actif_only=actif_only,
+        inactif_only=inactif_only,
+        search=search,
+        type_filter=type,
     )
+    return schemas.ListPointsVenteResponse(items=items, total=total)
 
 
 @router.get("/points-vente/{point_vente_id}", response_model=schemas.PointDeVenteResponse, tags=[TAG_POINTS_VENTE])
@@ -262,6 +371,21 @@ async def update_point_vente(
     if ent.entreprise_id != current_user.entreprise_id:
         raise ForbiddenError(detail="Accès à une autre entreprise non autorisé", code="FORBIDDEN_ENTREPRISE")
     return await PointVenteService(db).update(point_vente_id, data)
+
+
+@router.delete("/points-vente/{point_vente_id}", status_code=204, tags=[TAG_POINTS_VENTE])
+async def delete_point_vente(
+    db: DbSession,
+    current_user: CurrentUser,
+    point_vente_id: int,
+    _perm: None = RequirePermission("parametrage", "write"),
+):
+    """Suppression logique (soft delete) d'un point de vente."""
+    ent = await PointVenteService(db).get_or_404(point_vente_id)
+    if ent.entreprise_id != current_user.entreprise_id:
+        raise ForbiddenError(detail="Accès à une autre entreprise non autorisé", code="FORBIDDEN_ENTREPRISE")
+    await PointVenteService(db).delete_soft(point_vente_id)
+    return Response(status_code=204)
 
 
 # --- Rôles ---
@@ -325,7 +449,11 @@ async def update_role(
 
 # --- Permissions ---
 
-@router.get("/permissions", response_model=list[schemas.PermissionResponse], tags=[TAG_PERMISSIONS])
+@router.get(
+    "/permissions",
+    response_model=list[schemas.PermissionWithRolesResponse],
+    tags=[TAG_PERMISSIONS],
+)
 async def list_permissions(
     db: DbSession,
     current_user: CurrentUser,
@@ -333,11 +461,23 @@ async def list_permissions(
     skip: int = Query(0, ge=0),
     limit: int = Query(200, ge=1, le=200),
     module: str | None = None,
+    include_roles: bool = Query(False, description="Inclure les rôles affectés à chaque permission"),
 ):
     """Liste des permissions (référentiel)."""
-    return await PermissionService(db).get_permissions(
+    service = PermissionService(db)
+    if include_roles:
+        return await service.get_permissions_with_roles(
+            skip=skip, limit=limit, module=module
+        )
+    perms = await service.get_permissions(
         skip=skip, limit=limit, module=module
     )
+    return [
+        schemas.PermissionWithRolesResponse(
+            id=p.id, module=p.module, action=p.action, libelle=p.libelle, roles=[]
+        )
+        for p in perms
+    ]
 
 
 @router.get("/permissions/{permission_id}", response_model=schemas.PermissionResponse, tags=[TAG_PERMISSIONS])
@@ -394,7 +534,7 @@ async def list_utilisateurs(
     entreprise_id: int,
     _perm: None = RequirePermission("parametrage", "read"),
     skip: int = Query(0, ge=0),
-    limit: int = Query(100, ge=1, le=100),
+    limit: int = Query(100, ge=1, le=500),
     actif_only: bool = False,
     search: str | None = None,
 ):
@@ -437,6 +577,19 @@ async def create_utilisateur(
     return await UtilisateurService(db).create(data)
 
 
+async def _update_utilisateur_impl(
+    db: DbSession,
+    current_user: CurrentUser,
+    utilisateur_id: int,
+    data: schemas.UtilisateurUpdate,
+):
+    """Logique commune PATCH/PUT."""
+    ent = await UtilisateurService(db).get_or_404(utilisateur_id)
+    if ent.entreprise_id != current_user.entreprise_id:
+        raise ForbiddenError(detail="Accès à une autre entreprise non autorisé", code="FORBIDDEN_ENTREPRISE")
+    return await UtilisateurService(db).update(utilisateur_id, data)
+
+
 @router.patch("/utilisateurs/{utilisateur_id}", response_model=schemas.UtilisateurResponse, tags=[TAG_UTILISATEURS])
 async def update_utilisateur(
     db: DbSession,
@@ -446,10 +599,60 @@ async def update_utilisateur(
     _perm: None = RequirePermission("parametrage", "write"),
 ):
     """Mise à jour partielle d'un utilisateur."""
+    return await _update_utilisateur_impl(db, current_user, utilisateur_id, data)
+
+
+@router.put("/utilisateurs/{utilisateur_id}", response_model=schemas.UtilisateurResponse, tags=[TAG_UTILISATEURS])
+async def update_utilisateur_put(
+    db: DbSession,
+    current_user: CurrentUser,
+    utilisateur_id: int,
+    data: schemas.UtilisateurUpdate,
+    _perm: None = RequirePermission("parametrage", "write"),
+):
+    """Mise à jour d'un utilisateur (alias de PATCH)."""
+    return await _update_utilisateur_impl(db, current_user, utilisateur_id, data)
+
+
+@router.patch(
+    "/utilisateurs/{utilisateur_id}/changer-mot-de-passe",
+    status_code=204,
+    tags=[TAG_UTILISATEURS],
+)
+async def changer_mot_de_passe_utilisateur(
+    db: DbSession,
+    current_user: CurrentUser,
+    utilisateur_id: int,
+    data: schemas.UtilisateurChangePassword,
+    _perm: None = RequirePermission("parametrage", "write"),
+):
+    """
+    Change le mot de passe d'un utilisateur.
+    Si c'est son propre compte : ancien_mot_de_passe requis.
+    Si admin (autre utilisateur) : seul nouveau_mot_de_passe requis.
+    """
     ent = await UtilisateurService(db).get_or_404(utilisateur_id)
     if ent.entreprise_id != current_user.entreprise_id:
         raise ForbiddenError(detail="Accès à une autre entreprise non autorisé", code="FORBIDDEN_ENTREPRISE")
-    return await UtilisateurService(db).update(utilisateur_id, data)
+    await UtilisateurService(db).change_password(
+        utilisateur_id, data, current_user_id=current_user.id
+    )
+    return Response(status_code=204)
+
+
+@router.delete("/utilisateurs/{utilisateur_id}", status_code=204, tags=[TAG_UTILISATEURS])
+async def delete_utilisateur(
+    db: DbSession,
+    current_user: CurrentUser,
+    utilisateur_id: int,
+    _perm: None = RequirePermission("parametrage", "write"),
+):
+    """Désactivation logique (soft delete) d'un utilisateur."""
+    ent = await UtilisateurService(db).get_or_404(utilisateur_id)
+    if ent.entreprise_id != current_user.entreprise_id:
+        raise ForbiddenError(detail="Accès à une autre entreprise non autorisé", code="FORBIDDEN_ENTREPRISE")
+    await UtilisateurService(db).delete_soft(utilisateur_id)
+    return Response(status_code=204)
 
 
 # --- Affectations utilisateur / PDV ---

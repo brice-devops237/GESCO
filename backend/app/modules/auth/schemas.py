@@ -24,3 +24,9 @@ class RefreshRequest(BaseModel):
     """Corps de la requête POST /auth/refresh."""
     refresh_token: str = Field(..., min_length=1, description="Token de rafraîchissement reçu au login")
 
+
+class EntrepriseOption(BaseModel):
+    """Option entreprise pour le select de la page de connexion (endpoint public)."""
+    id: int = Field(..., description="ID de l'entreprise")
+    raison_sociale: str = Field(..., description="Raison sociale affichée")
+

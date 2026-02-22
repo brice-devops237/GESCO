@@ -38,6 +38,7 @@ class EntrepriseService(BaseParametrageService):
         skip: int = 0,
         limit: int = 100,
         actif_only: bool = False,
+        inactif_only: bool = False,
         search: str | None = None,
     ) -> tuple[list[Entreprise], int]:
         """Liste globale des entreprises (sans filtre entreprise_id).
@@ -46,8 +47,13 @@ class EntrepriseService(BaseParametrageService):
             skip=skip,
             limit=limit,
             actif_only=actif_only,
+            inactif_only=inactif_only,
             search=search,
         )
+
+    async def get_stats(self) -> dict:
+        """Statistiques globales sur les entreprises (total, actives, inactives, répartitions)."""
+        return await self._repo.get_stats()
 
     async def create(self, data: EntrepriseCreate) -> Entreprise:
         if not is_pays_code_valide(data.pays):

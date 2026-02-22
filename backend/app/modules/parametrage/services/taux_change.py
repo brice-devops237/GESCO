@@ -9,7 +9,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.modules.parametrage.models import TauxChange
 from app.modules.parametrage.repositories import DeviseRepository, TauxChangeRepository
-from app.modules.parametrage.schemas import TauxChangeCreate
+from app.modules.parametrage.schemas import TauxChangeCreate, TauxChangeUpdate
 from app.modules.parametrage.services.base import BaseParametrageService
 from app.modules.parametrage.services.messages import Messages
 
@@ -41,6 +41,10 @@ class TauxChangeService(BaseParametrageService):
             date_effet,
         )
 
+    async def get_stats(self) -> dict:
+        """Statistiques globales sur les taux de change (total)."""
+        return await self._repo.get_stats()
+
     async def get_taux_changes(
         self,
         *,
@@ -48,12 +52,16 @@ class TauxChangeService(BaseParametrageService):
         limit: int = 100,
         devise_from_id: int | None = None,
         devise_to_id: int | None = None,
-    ) -> list[TauxChange]:
+        date_effet_min: date | None = None,
+        date_effet_max: date | None = None,
+    ) -> tuple[list[TauxChange], int]:
         return await self._repo.find_all(
             skip=skip,
             limit=limit,
             devise_from_id=devise_from_id,
             devise_to_id=devise_to_id,
+            date_effet_min=date_effet_min,
+            date_effet_max=date_effet_max,
         )
 
     async def create(self, data: TauxChangeCreate) -> TauxChange:
@@ -73,4 +81,16 @@ class TauxChangeService(BaseParametrageService):
             source=data.source,
         )
         return await self._repo.add(t)
+
+    async def update(self, taux_id: int, data: TauxChangeUpdate) -> TauxChange:
+        t = await self.get_or_404(taux_id)
+        for key, value in data.model_dump(exclude_unset=True).items():
+            if key == "taux" and value is not None and value <= 0:
+                self._raise_bad_request(Messages.TAUX_CHANGE_INVALID)
+            setattr(t, key, value)
+        return await self._repo.update(t)
+
+    async def delete(self, taux_id: int) -> None:
+        t = await self.get_or_404(taux_id)
+        await self._repo.delete(t)
 

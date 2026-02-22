@@ -116,7 +116,11 @@ class TiersResponse(BaseModel):
     canal_vente_id: int | None = None
     limite_credit: Decimal | None = None
     delai_paiement_jours: int | None = None
+    compte_bancaire: str | None = None
+    mobile_money_numero: str | None = None
+    mobile_money_operateur: str | None = None
     segment: str | None = None
+    notes: str | None = None
     actif: bool
     created_at: datetime
     updated_at: datetime

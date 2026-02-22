@@ -8,3 +8,31 @@
 html {
   box-sizing: border-box;
 }
+
+/* SweetAlert2 au-dessus des modals Vuetify (dialog z-index ~2400) */
+.swal-above-modal {
+  z-index: 10000 !important;
+}
+
+/* Style des boutons SweetAlert2 : Confirm = primary, Cancel = error + texte blanc */
+.swal-above-modal .swal2-confirm {
+  background-color: rgb(var(--v-theme-primary)) !important;
+  color: #fff !important;
+}
+
+.swal-above-modal .swal2-confirm:hover {
+  background-color: rgb(var(--v-theme-primary)) !important;
+  filter: brightness(1.1);
+  color: #fff !important;
+}
+
+.swal-above-modal .swal2-cancel {
+  background-color: rgb(var(--v-theme-error)) !important;
+  color: #fff !important;
+}
+
+.swal-above-modal .swal2-cancel:hover {
+  background-color: rgb(var(--v-theme-error)) !important;
+  filter: brightness(1.1);
+  color: #fff !important;
+}

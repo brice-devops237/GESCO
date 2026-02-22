@@ -1,25 +1,30 @@
 <script setup lang="ts">
 import { useTheme } from 'vuetify'
+import { useAuthStore } from '@/stores/auth'
 import misc404 from '@images/pages/404.png'
 import miscMaskDark from '@images/pages/misc-mask-dark.png'
 import miscMaskLight from '@images/pages/misc-mask-light.png'
 import tree from '@images/pages/tree.png'
 
 const vuetifyTheme = useTheme()
+const authStore = useAuthStore()
 
 const authThemeMask = computed(() => {
   return vuetifyTheme.global.name.value === 'light'
     ? miscMaskLight
     : miscMaskDark
 })
+
+const backToLabel = computed(() => (authStore.isAuthenticated ? "Retour à l'accueil" : 'Retour à la connexion'))
+const backToRoute = computed(() => (authStore.isAuthenticated ? '/dashboard' : '/login'))
 </script>
 
 <template>
   <div class="misc-wrapper">
     <ErrorHeader
       status-code="404"
-      title="Page Not Found ⚠️"
-      description="We couldn't find the page you are looking for."
+      title="Page introuvable"
+      description="La page que vous recherchez n'existe pas."
     />
 
     <!-- 👉 Image -->
@@ -31,10 +36,11 @@ const authThemeMask = computed(() => {
         class="mx-auto"
       />
       <VBtn
-        to="/"
+        :to="backToRoute"
+        color="primary"
         class="mt-10"
       >
-        Back to Home
+        {{ backToLabel }}
       </VBtn>
     </div>
 
